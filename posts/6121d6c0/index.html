@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZDawnG">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Linux perf 的使用方法与火焰图分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Perf与火焰图">
+<meta property="og:url" content="https://zdawng.github.io/posts/6121d6c0/index.html">
+<meta property="og:site_name" content="ZDawnG">
+<meta property="og:description" content="Linux perf 的使用方法与火焰图分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zdawng.github.io/img/perf/flamegraph.svg">
+<meta property="article:published_time" content="2023-09-09T14:02:00.000Z">
+<meta property="article:modified_time" content="2025-05-22T11:43:13.217Z">
+<meta property="article:author" content="ZDawnG">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="perf">
+<meta property="article:tag" content="flamegraph">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zdawng.github.io/img/perf/flamegraph.svg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Perf与火焰图 - ZDawnG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zdawng.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZDawnG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tool/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>工具</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Perf与火焰图"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-09 22:02" pubdate>
+          2023年9月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Perf与火焰图</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-安装-perf"><a href="#1-安装-perf" class="headerlink" title="1 安装 perf"></a>1 安装 perf</h1><p>perf 命令（performance 的缩写）是 Linux 系统原生提供的性能分析工具，会返回 CPU 正在执行的函数名以及调用栈（stack）。通常，它的执行频率是 99Hz（每秒 99 次），如果 99 次都返回同一个函数名，那就说明 CPU 这一秒钟都在执行同一个函数，可能存在性能问题。</p>
+<h2 id="1-1-使用-apt-安装"><a href="#1-1-使用-apt-安装" class="headerlink" title="1.1 使用 apt 安装"></a>1.1 使用 apt 安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install linux-tools-common<br>sudo apt install linux-tools-`<span class="hljs-built_in">uname</span> -r`<br><span class="hljs-comment"># 通过以下命令验证安装是否成功</span><br>perf --version<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-2-使用源码编译安装"><a href="#1-2-使用源码编译安装" class="headerlink" title="1.2 使用源码编译安装"></a>1.2 使用源码编译安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 检查内核版本</span><br><span class="hljs-built_in">uname</span> -r<br><span class="hljs-comment"># 下载内核源码</span><br>wget http://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.gz<br><span class="hljs-comment"># 安装依赖并解压</span><br>sudo apt install -y build-essential bison flex libssl-dev libelf-dev libcap-dev libattr1-dev libncurses-dev<br>tar -zxvf linux-4.19.tar.gz<br><span class="hljs-built_in">cd</span> linux-4.19/tools/perf/<br><span class="hljs-comment"># 编译安装</span><br>make perf -j8 V=1<br>make perf install DESTDIR=/usr/local V=1<br><span class="hljs-comment"># 通过以下命令验证安装是否成功</span><br>perf --version<br></code></pre></td></tr></table></figure>
+
+<h1 id="2-使用-perf"><a href="#2-使用-perf" class="headerlink" title="2 使用 perf"></a>2 使用 perf</h1><h2 id="2-1-perf-record"><a href="#2-1-perf-record" class="headerlink" title="2.1 perf record"></a>2.1 perf record</h2><p>perf record 记录单个函数级别的统计信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo perf record -F 99 -p 13204 -g -- <span class="hljs-built_in">sleep</span> 30<br></code></pre></td></tr></table></figure>
+
+<p>上面的代码中，<code>perf record</code>表示记录，<code>-F 99</code>表示每秒 99 次，<code>-p 13204</code>是进程号，即对哪个进程进行分析，<code>-g</code>表示记录调用栈，<code>sleep 30</code>则是持续 30 秒。</p>
+<p>运行后会产生一个庞大的文本文件。如果一台服务器有 16 个 CPU，每秒抽样 99 次，持续 30 秒，就得到 47,520 个调用栈，长达几十万甚至上百万行。</p>
+<h2 id="2-2-perf-report"><a href="#2-2-perf-report" class="headerlink" title="2.2 perf report"></a>2.2 perf report</h2><p><code>perf report</code>命令可以统计每个调用栈出现的百分比，然后从高到低排列。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo perf report -a --stdio<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-perf-list"><a href="#2-3-perf-list" class="headerlink" title="2.3 perf list"></a>2.3 perf list</h2><p>列出所有能够触发 perf 采样点的事件,主要区分为如下三类事件：</p>
+<ul>
+<li>Hardware Event 是由 PMU 硬件产生的事件，比如 cache 命中</li>
+<li>Software Event 是内核软件产生的事件，比如进程切换，tick 数等</li>
+<li>Tracepoint event 是内核中的静态 tracepoint 所触发的事件</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo perf list<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-4-perf-top"><a href="#2-4-perf-top" class="headerlink" title="2.4 perf top"></a>2.4 perf top</h2><p>用于实时显示当前系统的性能统计信息。该命令主要用来观察整个系统当前的状态，比如可以通过查看该命令的输出来查看当前系统最耗时的内核函数或某个用户进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo perf top<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-5-perf-script"><a href="#2-5-perf-script" class="headerlink" title="2.5 perf script"></a>2.5 perf script</h2><p>Tom Zanussi 将 perl 和 python 解析器嵌入到 perf 程序中，从而使得 perf 能够自动执行 perl 或者 python 脚本进一步进行处理，从而为 perf 提供了强大的扩展能力。因为任何人都可以编写新的脚本，对 perf 的原始输出数据进行所需要的进一步处理。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo perf script &gt; out.perf<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-火焰图"><a href="#3-火焰图" class="headerlink" title="3 火焰图"></a>3 火焰图</h1><h2 id="3-1-简介"><a href="#3-1-简介" class="headerlink" title="3.1 简介"></a>3.1 简介</h2><p>火焰图是基于 perf 结果产生的 SVG 图片，用来展示 CPU 的调用栈。</p>
+<p><img src="/img/perf/flamegraph.svg" srcset="/img/loading.gif" lazyload></p>
+<p>y 轴表示调用栈，每一层都是一个函数。调用栈越深，火焰就越高，顶部就是正在执行的函数，下方都是它的父函数。</p>
+<p>x 轴表示抽样数，如果一个函数在 x 轴占据的宽度越宽，就表示它被抽到的次数多，即执行的时间长。注意，x 轴不代表时间，而是所有的调用栈合并后，按字母顺序排列的。</p>
+<p>火焰图就是看顶层的哪个函数占据的宽度最大。只要有”平顶”（plateaus），就表示该函数可能存在性能问题。</p>
+<p>可通过 GITHUB 直接下载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/brendangregg/FlameGraph.git<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-2-使用方式"><a href="#3-2-使用方式" class="headerlink" title="3.2 使用方式"></a>3.2 使用方式</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /path/to/FlameGraph<br><br>perf record -F 99 -a -g -- <span class="hljs-built_in">sleep</span> 60<br>perf script &gt; out.perf<br>./stackcollapse-perf.pl out.perf &gt; out.folded<br>./flamegraph.pl out.kern_folded &gt; kernel.svg<br></code></pre></td></tr></table></figure>
+
+<p>火焰图是 SVG 图片，可以与用户互动。</p>
+<ul>
+<li><p>鼠标悬浮。火焰的每一层都会标注函数名，鼠标悬浮时会显示完整的函数名、抽样抽中的次数、占据总抽样次数的百分比。</p>
+</li>
+<li><p>点击放大。在某一层点击，火焰图会水平放大，该层会占据所有宽度，显示详细信息。左上角会同时显示”Reset Zoom”，点击该链接，图片就会恢复原样。</p>
+</li>
+<li><p>搜索。按下 Ctrl + F 会显示一个搜索框，用户可以输入关键词或正则表达式，所有符合条件的函数名会高亮显示。</p>
+</li>
+</ul>
+<h1 id="4-范例"><a href="#4-范例" class="headerlink" title="4 范例"></a>4 范例</h1><h2 id="例-1"><a href="#例-1" class="headerlink" title="例 1"></a>例 1</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf top -e cycles:k <span class="hljs-comment">#显示内核和模块中，消耗最多 CPU 周期的函数</span><br><br>perf top -e kmem:kmem_cache_alloc <span class="hljs-comment">#显示分配高速缓存最多的函数</span><br><br>perf top<br><br>Samples: 1M of event <span class="hljs-string">&#x27;cycles&#x27;</span>, Event count (approx.): 73891391490<br> 5.44% perf [.] 0x0000000000023256<br> 4.86% [kernel] [k] \_spin_lock<br> 2.43% [kernel] [k] \_spin_lock_bh<br> 2.29% [kernel] [k] \_spin_lock_irqsave<br> 1.77% [kernel] [k] **d_lookup<br> 1.55% libc-2.12.so [.] **strcmp_sse42<br> 1.43% nginx [.] ngx_vslprintf<br> 1.37% [kernel] [k] tcp_poll<br><br>第一列：符号引发的性能事件的比例，默认指占用的 cpu 周期比例。<br>第二列：符号所在的 DSO(Dynamic Shared Object)，可以是应用程序、内核、动态链接库、模块。<br>第三列：DSO 的类型。[.]表示此符号属于用户态的 ELF 文件，包括可执行文件与动态链接库)。[k]表述此符号属于内核或模块。<br>第四列：符号名。有些符号不能解析为函数名，只能用地址表示。<br></code></pre></td></tr></table></figure>
+
+<h2 id="例-2"><a href="#例-2" class="headerlink" title="例 2"></a>例 2</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf top -g <span class="hljs-comment">#得到调用关系图</span><br><br>perf top -e cycles <span class="hljs-comment">#指定性能事件</span><br><br>perf top -p 23015,32476 <span class="hljs-comment">#查看这两个进程的 cpu cycles 使用情况</span><br><br>perf top -s <span class="hljs-built_in">comm</span>,pid,symbol <span class="hljs-comment">#显示调用 symbol 的进程名和进程号</span><br><br>perf top --comms nginx,top <span class="hljs-comment">#仅显示属于指定进程的符号</span><br><br>perf top --symbols kfree <span class="hljs-comment">#仅显示指定的符号</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="例-3"><a href="#例-3" class="headerlink" title="例 3"></a>例 3</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf <span class="hljs-built_in">stat</span> <span class="hljs-built_in">ls</span><br><br>Performance counter stats <span class="hljs-keyword">for</span> <span class="hljs-string">&#x27;ls&#x27;</span>:<br><br>          0.653782 task-clock                <span class="hljs-comment">#    0.691 CPUs utilized</span><br>                 0 context-switches          <span class="hljs-comment">#    0.000 K/sec</span><br>                 0 CPU-migrations            <span class="hljs-comment">#    0.000 K/sec</span><br>               247 page-faults               <span class="hljs-comment">#    0.378 M/sec</span><br>         1,625,426 cycles                    <span class="hljs-comment">#    2.486 GHz</span><br>         1,050,293 stalled-cycles-frontend   <span class="hljs-comment">#   64.62% frontend cycles idle</span><br>           838,781 stalled-cycles-backend    <span class="hljs-comment">#   51.60% backend  cycles idle</span><br>         1,055,735 instructions              <span class="hljs-comment">#    0.65  insns per cycle</span><br>                                             <span class="hljs-comment">#    0.99  stalled cycles per insn</span><br>           210,587 branches                  <span class="hljs-comment">#  322.106 M/sec</span><br>            10,809 branch-misses             <span class="hljs-comment">#    5.13% of all branches</span><br><br>       0.000945883 seconds time elapsed<br><br>    输出包括<span class="hljs-built_in">ls</span>的执行时间，以及10个性能事件的统计。<br><br>    task-clock：任务真正占用的处理器时间，单位为ms。CPUs utilized = task-clock / time elapsed，CPU的占用率。<br><br>    context-switches：上下文的切换次数。<br><br>    CPU-migrations：处理器迁移次数。Linux为了维持多个处理器的负载均衡，在特定条件下会将某个任务从一个CPU<br><br>    迁移到另一个CPU。<br><br>    page-faults：缺页异常的次数。当应用程序请求的页面尚未建立、请求的页面不在内存中，或者请求的页面虽然在内<br><br>    存中，但物理地址和虚拟地址的映射关系尚未建立时，都会触发一次缺页异常。另外TLB不命中，页面访问权限不匹配<br><br>    等情况也会触发缺页异常。<br><br>    cycles：消耗的处理器周期数。如果把被<span class="hljs-built_in">ls</span>使用的cpu cycles看成是一个处理器的，那么它的主频为2.486GHz。<br><br>    可以用cycles / task-clock算出。<br><br>    stalled-cycles-frontend：略过。<br><br>    stalled-cycles-backend：略过。<br><br>    instructions：执行了多少条指令。IPC为平均每个cpu cycle执行了多少条指令。<br><br>    branches：遇到的分支指令数。branch-misses是预测错误的分支指令数。<br><br>perf <span class="hljs-built_in">stat</span> -r 10 <span class="hljs-built_in">ls</span> &gt; /dev/null <span class="hljs-comment">#执行 10 次程序，给出标准偏差与期望的比值</span><br><br>perf <span class="hljs-built_in">stat</span> -v <span class="hljs-built_in">ls</span> &gt; /dev/null <span class="hljs-comment">#显示更详细的信息</span><br><br>perf <span class="hljs-built_in">stat</span> -n <span class="hljs-built_in">ls</span> &gt; /dev/null <span class="hljs-comment">#只显示任务执行时间，不显示性能计数器</span><br><br>perf <span class="hljs-built_in">stat</span> -a -A <span class="hljs-built_in">ls</span> &gt; /dev/null <span class="hljs-comment">#单独给出每个 CPU 上的信息</span><br><br>perf <span class="hljs-built_in">stat</span> -e syscalls:sys_enter <span class="hljs-built_in">ls</span> <span class="hljs-comment">#ls 命令执行了多少次系统调用</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="例-4"><a href="#例-4" class="headerlink" title="例 4"></a>例 4</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf record -p `pgrep -d <span class="hljs-string">&#x27;,&#x27;</span> nginx` <span class="hljs-comment">#记录 nginx 进程的性能数据</span><br><br>perf record <span class="hljs-built_in">ls</span> -g <span class="hljs-comment">#记录执行 ls 时的性能数据</span><br><br>perf record -e syscalls:sys_enter <span class="hljs-built_in">ls</span> <span class="hljs-comment">#记录执行 ls 时的系统调用，可以知道哪些系统调用最频繁</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="例-5"><a href="#例-5" class="headerlink" title="例 5"></a>例 5</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf lock record <span class="hljs-built_in">ls</span> <span class="hljs-comment">#记录</span><br><br>perf lock report <span class="hljs-comment">#报告</span><br><br>                Name   acquired  contended total <span class="hljs-built_in">wait</span> (ns)   max <span class="hljs-built_in">wait</span> (ns)   min <span class="hljs-built_in">wait</span> (ns)<br><br>&amp;mm-&gt;page*table*... 382 0 0 0 0<br>&amp;mm-&gt;page*table*... 72 0 0 0 0<br>&amp;fs-&gt;lock 64 0 0 0 0<br>dcache_lock 62 0 0 0 0<br>vfsmount_lock 43 0 0 0 0<br>&amp;newf-&gt;file_lock... 41 0 0 0 0<br><br>Name：内核锁的名字。<br>aquired：该锁被直接获得的次数，因为没有其它内核路径占用该锁，此时不用等待。<br>contended：该锁等待后获得的次数，此时被其它内核路径占用，需要等待。<br>total <span class="hljs-built_in">wait</span>：为了获得该锁，总共的等待时间。<br>max <span class="hljs-built_in">wait</span>：为了获得该锁，最大的等待时间。<br>min <span class="hljs-built_in">wait</span>：为了获得该锁，最小的等待时间。<br></code></pre></td></tr></table></figure>
+
+<h2 id="例-6"><a href="#例-6" class="headerlink" title="例 6"></a>例 6</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf kmem record <span class="hljs-built_in">ls</span> <span class="hljs-comment">#记录</span><br><br>perf kmem <span class="hljs-built_in">stat</span> --<span class="hljs-built_in">caller</span> --alloc -l 20 <span class="hljs-comment">#报告</span><br><br>---<br><br>Callsite | Total_alloc/Per | Total_req/Per | Hit | Ping-pong | Frag<br><br>perf_event_mmap+ec | 311296/8192 | 155952/4104 | 38 | 0 | 49.902%<br>proc_reg_open+41 | 64/64 | 40/40 | 1 | 0 | 37.500%<br>\_\_kmalloc_node+4d | 1024/1024 | 664/664 | 1 | 0 | 35.156%<br>ext3_readdir+5bd | 64/64 | 48/48 | 1 | 0 | 25.000%<br>load_elf_binary+8ec | 512/512 | 392/392 | 1 | 0 | 23.438%<br><br>Callsite：内核代码中调用 kmalloc 和 kfree 的地方。<br>Total_alloc/Per：总共分配的内存大小，平均每次分配的内存大小。<br>Total_req/Per：总共请求的内存大小，平均每次请求的内存大小。<br>Hit：调用的次数。<br>Ping-pong：kmalloc 和 kfree 不被同一个 CPU 执行时的次数，这会导致 cache 效率降低。<br>Frag：碎片所占的百分比，碎片 = 分配的内存 - 请求的内存，这部分是浪费的。<br>有使用--alloc 选项，还会看到 Alloc Ptr，即所分配内存的地址。<br></code></pre></td></tr></table></figure>
+
+<h2 id="例-7"><a href="#例-7" class="headerlink" title="例 7"></a>例 7</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf <span class="hljs-built_in">sched</span> record <span class="hljs-built_in">sleep</span> 10<br><br>perf report latency --<span class="hljs-built_in">sort</span> max<br><br>---<br><br>Task | Runtime ms | Switches | Average delay ms | Maximum delay ms | Maximum delay at |<br><br>---<br><br>events/10:61 | 0.655 ms | 10 | avg: 0.045 ms | max: 0.161 ms | max at: 9804.958730 s<br><span class="hljs-built_in">sleep</span>:11156 | 2.263 ms | 4 | avg: 0.052 ms | max: 0.118 ms | max at: 9804.865552 s<br>edac-poller:1125 | 0.598 ms | 10 | avg: 0.042 ms | max: 0.113 ms | max at: 9804.958698 s<br>events/2:53 | 0.676 ms | 10 | avg: 0.037 ms | max: 0.102 ms | max at: 9814.751605 s<br>perf:11155 | 2.109 ms | 1 | avg: 0.068 ms | max: 0.068 ms | max at: 9814.867918 s<br><br>TASK：进程名和 pid。<br>Runtime：实际的运行时间。<br>Switches：进程切换的次数。<br>Average delay：平均的调度延迟。<br>Maximum delay：最大的调度延迟。<br>Maximum delay at：最大调度延迟发生的时刻。<br></code></pre></td></tr></table></figure>
+
+<h2 id="例-8"><a href="#例-8" class="headerlink" title="例 8"></a>例 8</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">perf probe --line schedule <span class="hljs-comment">#前面有行号的可以探测，没有行号的就不行了</span><br><br>perf report latency --<span class="hljs-built_in">sort</span> max <span class="hljs-comment">#在 schedule 函数的 12 处增加一个探测点</span><br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="category-chain-item">环境搭建</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/kernel/" class="print-no-link">#kernel</a>
+      
+        <a href="/tags/perf/" class="print-no-link">#perf</a>
+      
+        <a href="/tags/flamegraph/" class="print-no-link">#flamegraph</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Perf与火焰图</div>
+      <div>https://zdawng.github.io/posts/6121d6c0/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZDawnG</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/7d530f04/" title="Centos文本模式安装">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Centos文本模式安装</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/1c4bcd74/" title="frp 配置教程">
+                        <span class="hidden-mobile">frp 配置教程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"ZDawnG/ZDawnG.github.io","repo-id":"R_kgDOJ5gWbg","category":"Announcements","category-id":"DIC_kwDOJ5gWbs4CqdLh","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

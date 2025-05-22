@@ -1,0 +1,851 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZDawnG">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="配置frp以实现内网穿透，同时保证系统的安全性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="加密 frp 配置教程">
+<meta property="og:url" content="https://zdawng.github.io/posts/e8847680/index.html">
+<meta property="og:site_name" content="ZDawnG">
+<meta property="og:description" content="配置frp以实现内网穿透，同时保证系统的安全性">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zdawng.github.io/img/frp/stcp.png">
+<meta property="article:published_time" content="2024-12-08T14:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-22T11:43:13.217Z">
+<meta property="article:author" content="ZDawnG">
+<meta property="article:tag" content="frp">
+<meta property="article:tag" content="Systemd service">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zdawng.github.io/img/frp/stcp.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>加密 frp 配置教程 - ZDawnG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zdawng.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZDawnG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tool/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>工具</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="加密 frp 配置教程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-08 22:00" pubdate>
+          2024年12月8日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">加密 frp 配置教程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本篇文章中，记录了如何对 frpc 和 frps 之间的通信内容进行加密，从而有效防止传输内容被截取，保证系统的安全性。</p>
+<blockquote>
+<p>从 v0.52.0 版本开始，frp 开始支持 TOML、YAML 和 JSON 作为配置文件格式。</p>
+<p>请注意，INI 已被弃用，并将在未来的发布中移除。新功能只能在 TOML、YAML 或 JSON 中使用。</p>
+<p><strong>建议使用 TOML 作为配置文件格式。</strong></p>
+</blockquote>
+<blockquote>
+<p>应始终使用最新的 frpc 和 frps 的软件版本，新版本通常修复了已知的安全漏洞和问题。</p>
+</blockquote>
+<h1 id="0-提高安全性的方法"><a href="#0-提高安全性的方法" class="headerlink" title="0 提高安全性的方法"></a>0 提高安全性的方法</h1><h2 id="0-1-为-token-配置强密码"><a href="#0-1-为-token-配置强密码" class="headerlink" title="0.1 为 token 配置强密码"></a>0.1 为 token 配置强密码</h2><p>可以使用 <a target="_blank" rel="noopener" href="https://tool.chinaz.com/tools/randompwd/">随机密码生成器</a> 来生成包含大小写字母、数字和特殊字符的组合，并定期更改 token。</p>
+<h2 id="0-2-修改默认端口"><a href="#0-2-修改默认端口" class="headerlink" title="0.2 修改默认端口"></a>0.2 修改默认端口</h2><p>frps 的配置文件中默认使用 7000 端口，建议改为高位端口号。</p>
+<h2 id="0-3-限制访问来源"><a href="#0-3-限制访问来源" class="headerlink" title="0.3 限制访问来源"></a>0.3 限制访问来源</h2><p>一种方式是可以设置 frp 服务端只接受目标范围的 IP 进行链接，但不适合客户端经常更新 IP 的情形。</p>
+<p>另一种方式是只允许特定用户与 frp 服务端进行链接，frp 还支持受控端进行用户访问控制。</p>
+<h2 id="0-4-使用-stcp"><a href="#0-4-使用-stcp" class="headerlink" title="0.4 使用 stcp"></a>0.4 使用 stcp</h2><p>某些内网服务如果直接暴漏在公网可能存在安全风险，使用 <code>stcp(secret tcp)</code> 类型的代理可以实现将内网服务暴漏给经过授权的用户，但是访问者也需要运行另外一个 frpc 客户端。</p>
+<p><img src="/img/frp/stcp.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="0-5-自定义-TLS-加密"><a href="#0-5-自定义-TLS-加密" class="headerlink" title="0.5 自定义 TLS 加密"></a>0.5 自定义 TLS 加密</h2><p><code>STCP</code> 等功能能有效防止流量内容在通信过程中被盗取，但是无法判断对方的身份是否合法，存在被中间人攻击的风险。为此 frp 支持 frpc 和 frps 之间的流量通过 TLS 协议加密，并且支持客户端或服务端单向验证，双向验证等功能。</p>
+<p>当 <code>frps.toml</code> 中 <code>transport.tls.force = true</code> 时，表示 server 端只接受 TLS 连接的客户端，这也是 frps 验证 frpc 身份的前提条件。如果 <code>frps.toml</code> 中 <code>transport.tls.trustedCaFile</code> 内容是有效的话，那么默认就会开启 <code>transport.tls.force = true</code>。</p>
+<blockquote>
+<p><strong>从 v0.50.0 开始，<code>transport.tls.enable</code> 的默认值将会为 true，默认开启 TLS 协议加密。</strong></p>
+<p><strong>如果 frps 端没有配置证书，则会使用随机生成的证书来加密流量。</strong></p>
+<p><strong>默认情况下，frpc 开启 TLS 加密功能，但是不校验 frps 的证书。</strong></p>
+</blockquote>
+<h1 id="1-下载"><a href="#1-下载" class="headerlink" title="1 下载"></a>1 下载</h1><p>frp 采用 Golang 编写，支持跨平台，仅需下载对应平台的二进制文件即可执行，没有额外依赖。</p>
+<p>可以在 Github 的 <a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases">Release</a> 页面中下载到最新版本的客户端和服务端二进制文件，所有文件被打包在一个压缩包中。</p>
+<h1 id="2-生成加密证书"><a href="#2-生成加密证书" class="headerlink" title="2 生成加密证书"></a>2 生成加密证书</h1><p>双向验证应该是目前最安全的方案。启用双向验证需要先生成证书。</p>
+<p>首先建立一个文件夹，后续在该目录内进行操作。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p /path/to/save<br><span class="hljs-built_in">cd</span> /path/to/save<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-1-准备-my-openssl-cnf-文件"><a href="#2-1-准备-my-openssl-cnf-文件" class="headerlink" title="2.1 准备 my-openssl.cnf 文件"></a>2.1 准备 <code>my-openssl.cnf</code> 文件</h2><p>将以下配置写入 <code>my-openssl.cnf</code> 文件。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[ ca ]</span><br><span class="hljs-attr">default_ca</span> = CA_default<br><span class="hljs-section">[ CA_default ]</span><br><span class="hljs-attr">x509_extensions</span> = usr_cert<br><span class="hljs-section">[ req ]</span><br><span class="hljs-attr">default_bits</span>        = <span class="hljs-number">2048</span><br><span class="hljs-attr">default_md</span>          = sha256<br><span class="hljs-attr">default_keyfile</span>     = privkey.pem<br><span class="hljs-attr">distinguished_name</span>  = req_distinguished_name<br><span class="hljs-attr">attributes</span>          = req_attributes<br><span class="hljs-attr">x509_extensions</span>     = v3_ca<br><span class="hljs-attr">string_mask</span>         = utf8only<br><span class="hljs-section">[ req_distinguished_name ]</span><br><span class="hljs-section">[ req_attributes ]</span><br><span class="hljs-section">[ usr_cert ]</span><br><span class="hljs-attr">basicConstraints</span>       = CA:<span class="hljs-literal">FALSE</span><br><span class="hljs-attr">nsComment</span>              = <span class="hljs-string">&quot;OpenSSL Generated Certificate&quot;</span><br><span class="hljs-attr">subjectKeyIdentifier</span>   = hash<br><span class="hljs-attr">authorityKeyIdentifier</span> = keyid,issuer<br><span class="hljs-section">[ v3_ca ]</span><br><span class="hljs-attr">subjectKeyIdentifier</span>   = hash<br><span class="hljs-attr">authorityKeyIdentifier</span> = keyid:always,issuer<br><span class="hljs-attr">basicConstraints</span>       = CA:<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-生成-CA"><a href="#2-2-生成-CA" class="headerlink" title="2.2 生成 CA"></a>2.2 生成 CA</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl genrsa -out ca.key 2048<br>openssl req -x509 -new -nodes -key ca.key -subj <span class="hljs-string">&quot;/CN=example.ca.com&quot;</span> -days 5000 -out ca.crt<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-生成服务端证书"><a href="#2-3-生成服务端证书" class="headerlink" title="2.3 生成服务端证书"></a>2.3 生成服务端证书</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl genrsa -out server.key 2048<br><br>openssl req -new -sha256 -key server.key \<br>    -subj <span class="hljs-string">&quot;/C=XX/ST=DEFAULT/L=DEFAULT/O=DEFAULT/CN=server.com&quot;</span> \<br>    -reqexts SAN \<br>    -config &lt;(<span class="hljs-built_in">cat</span> my-openssl.cnf &lt;(<span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;\n[SAN]\nsubjectAltName=DNS:localhost,IP: 你的服务端公网ip,DNS:example.server.com&quot;</span>)) \<br>    -out server.csr<br><br>openssl x509 -req -days 5000 -sha256 \<br>	-<span class="hljs-keyword">in</span> server.csr -CA ca.crt -CAkey ca.key -CAcreateserial \<br>	-extfile &lt;(<span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;subjectAltName=DNS:localhost,IP: 你的服务端公网ip,DNS:example.server.com&quot;</span>) \<br>	-out server.crt<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>将 <code>subjectAltName</code> 中的 IP 地址改为服务端的公网 IP，否则客户端连接时会报如下错误：</p>
+<p>[W] [service.go:133] login to server failed: tls: failed to verify certificate: x509: certificate is valid for 127.0.0.1, not x.x.x.x</p>
+<p>如果需要绑定域名，将 <code>example.server.com</code> 改为域名。</p>
+</blockquote>
+<h2 id="2-4-生成客户端证书"><a href="#2-4-生成客户端证书" class="headerlink" title="2.4 生成客户端证书"></a>2.4 生成客户端证书</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl genrsa -out client.key 2048<br><br>openssl req -new -sha256 -key client.key \<br>    -subj <span class="hljs-string">&quot;/C=XX/ST=DEFAULT/L=DEFAULT/O=DEFAULT/CN=client.com&quot;</span> \<br>    -reqexts SAN \<br>    -config &lt;(<span class="hljs-built_in">cat</span> my-openssl.cnf &lt;(<span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;\n[SAN]\nsubjectAltName=DNS:client.com,DNS:example.client.com&quot;</span>)) \<br>    -out client.csr<br><br>openssl x509 -req -days 5000 -sha256 \<br>    -<span class="hljs-keyword">in</span> client.csr -CA ca.crt -CAkey ca.key -CAcreateserial \<br>	-extfile &lt;(<span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;subjectAltName=DNS:client.com,DNS:example.client.com&quot;</span>) \<br>	-out client.crt<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-5-文件使用说明"><a href="#2-5-文件使用说明" class="headerlink" title="2.5 文件使用说明"></a>2.5 文件使用说明</h2><p>最终文件如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">.<br>├── ca.crt<br>├── ca.key<br>├── ca.srl<br>├── client.crt<br>├── client.csr<br>├── client.key<br>├── my-openssl.cnf<br>├── server.crt<br>├── server.csr<br>└── server.key<br><br>1 directory, 8 file<br></code></pre></td></tr></table></figure>
+
+<p>需要上传到服务端的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">.<br>├── ca.crt<br>├── server.crt<br>└── server.key<br></code></pre></td></tr></table></figure>
+
+<p>需要上传到客户端的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">.<br>├── ca.crt<br>├── client.crt<br>└── client.key<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-使用"><a href="#3-使用" class="headerlink" title="3 使用"></a>3 使用</h1><p>内网待访问设备（受控端）和本地设备（控制端）都需要启动 frpc 客户端，且需要使用不同的启动配置。</p>
+<h2 id="3-1-解压缩"><a href="#3-1-解压缩" class="headerlink" title="3.1 解压缩"></a>3.1 解压缩</h2><p>解压下载的压缩包，Linux 通过命令<code>tar -zxvf 包名.tar.gz</code>，Windows 直接通过解压软件解压 zip 包。</p>
+<p>将其中的 frpc 拷贝到内网服务所在的机器上，将 frps 拷贝到具有公网 IP 的机器上，放置在任意目录。</p>
+<h2 id="3-2-编写配置文件"><a href="#3-2-编写配置文件" class="headerlink" title="3.2 编写配置文件"></a>3.2 编写配置文件</h2><h3 id="3-2-1-启动服务端"><a href="#3-2-1-启动服务端" class="headerlink" title="3.2.1 启动服务端"></a>3.2.1 启动服务端</h3><p>配置文件示例如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># frps.toml</span><br><span class="hljs-comment"># frp 监听的端口，默认是7000，可以改成其他的</span><br><span class="hljs-attr">bindPort</span> = <span class="hljs-number">7000</span><br><span class="hljs-comment"># 授权方式，默认为token</span><br><span class="hljs-attr">auth.method</span> = <span class="hljs-string">&quot;token&quot;</span><br><span class="hljs-comment"># 授权码，请改成更复杂的</span><br><span class="hljs-attr">auth.token</span> = <span class="hljs-string">&quot;aaaaa&quot;</span><br><br><span class="hljs-comment"># frp HTTPS TLS配置，按需配置</span><br><span class="hljs-attr">transport.tls.certFile</span> = <span class="hljs-string">&quot;/path/to/server.crt&quot;</span><br><span class="hljs-attr">transport.tls.keyFile</span> = <span class="hljs-string">&quot;/path/to/server.key&quot;</span><br><span class="hljs-attr">transport.tls.trustedCaFile</span> = <span class="hljs-string">&quot;/path/to/ca.crt&quot;</span><br><br><span class="hljs-comment"># frp 日志配置，按需配置</span><br><span class="hljs-attr">log.to</span> = <span class="hljs-string">&quot;/path/to/frps.log&quot;</span><br><span class="hljs-attr">log.level</span> = <span class="hljs-string">&quot;info&quot;</span><br><span class="hljs-attr">log.maxDays</span> = <span class="hljs-number">5</span><br></code></pre></td></tr></table></figure>
+
+<p>配置并保存后，在当前目录下输入启动命令 <code>./frps -c ./frps.toml</code> 启动服务端，查看日志文件，检查是否包含类似输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">2024/12/08 13:47:45 [I] [root.go:204] Start frps success<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-2-启动客户端"><a href="#3-2-2-启动客户端" class="headerlink" title="3.2.2 启动客户端"></a>3.2.2 启动客户端</h3><h4 id="3-2-2-1-启动受控端（内网服务器）"><a href="#3-2-2-1-启动受控端（内网服务器）" class="headerlink" title="3.2.2.1 启动受控端（内网服务器）"></a>3.2.2.1 启动受控端（内网服务器）</h4><p>配置文件示例如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># frpc.toml</span><br><span class="hljs-comment"># 服务器公网 IP</span><br><span class="hljs-attr">serverAddr</span> = <span class="hljs-string">&quot;1.1.1.1&quot;</span><br><span class="hljs-comment"># frp 监听的端口，与服务端一致</span><br><span class="hljs-attr">serverPort</span> = <span class="hljs-number">7000</span><br><br><span class="hljs-comment"># 客户端用户名，用于后续权限管理</span><br><span class="hljs-attr">user</span> = <span class="hljs-string">&quot;cli0&quot;</span><br><br><span class="hljs-comment"># 授权方式，默认为token</span><br><span class="hljs-attr">auth.method</span> = <span class="hljs-string">&quot;token&quot;</span><br><span class="hljs-comment"># 授权码，请改成更复杂的</span><br><span class="hljs-attr">auth.token</span> = <span class="hljs-string">&quot;aaaaa&quot;</span><br><br><span class="hljs-comment"># frp HTTPS TLS配置，按需配置</span><br><span class="hljs-attr">transport.tls.certFile</span> = <span class="hljs-string">&quot;/path/to/client.crt&quot;</span><br><span class="hljs-attr">transport.tls.keyFile</span> = <span class="hljs-string">&quot;/path/to/client.key&quot;</span><br><span class="hljs-attr">transport.tls.trustedCaFile</span> = <span class="hljs-string">&quot;/path/to/ca.crt&quot;</span><br><br><span class="hljs-comment"># frp 日志配置，按需配置</span><br><span class="hljs-attr">log.to</span> = <span class="hljs-string">&quot;./frpc.log&quot;</span><br><span class="hljs-attr">log.level</span> = <span class="hljs-string">&quot;info&quot;</span><br><span class="hljs-attr">log.maxDays</span> = <span class="hljs-number">5</span><br><br><span class="hljs-comment"># frp 代理设置</span><br><span class="hljs-section">[[proxies]]</span><br><span class="hljs-comment"># 代理名</span><br><span class="hljs-attr">name</span> = <span class="hljs-string">&quot;ssh-stcp&quot;</span><br><span class="hljs-comment"># 代理类型</span><br><span class="hljs-attr">type</span> = <span class="hljs-string">&quot;stcp&quot;</span><br><span class="hljs-comment"># 仅供本代理使用的安全密钥</span><br><span class="hljs-attr">secretKey</span> = <span class="hljs-string">&quot;bbbbb&quot;</span><br><span class="hljs-comment"># 允许控制本节点的控制端用户</span><br><span class="hljs-attr">allowUsers</span> = [<span class="hljs-string">&quot;cli1&quot;</span>, <span class="hljs-string">&quot;cli2&quot;</span>, <span class="hljs-string">&quot;cli3&quot;</span>]<br><span class="hljs-comment"># 代理地址 IP</span><br><span class="hljs-attr">localIP</span> = <span class="hljs-string">&quot;127.0.0.1&quot;</span><br><span class="hljs-comment"># 需要对外提供服务的端口</span><br><span class="hljs-attr">localPort</span> = <span class="hljs-number">22</span><br></code></pre></td></tr></table></figure>
+
+<p>配置并保存后，在当前目录下输入启动命令 <code>./frpc -c ./frpc.toml</code> 启动客户端，查看日志文件，检查是否包含类似输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">2024/12/08 20:58:06 [I] [control.go:143] [ssh] start proxy success<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-2-3-启动控制端（本地客户端）"><a href="#3-2-2-3-启动控制端（本地客户端）" class="headerlink" title="3.2.2.3 启动控制端（本地客户端）"></a>3.2.2.3 启动控制端（本地客户端）</h4><p>配置文件示例如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># frpc.toml</span><br><span class="hljs-comment"># 服务器公网 IP</span><br><span class="hljs-attr">serverAddr</span> = <span class="hljs-string">&quot;1.1.1.1&quot;</span><br><span class="hljs-comment"># frp 监听的端口，与服务端一致</span><br><span class="hljs-attr">serverPort</span> = <span class="hljs-number">7000</span><br><br><span class="hljs-comment"># 客户端用户名，用于后续权限管理</span><br><span class="hljs-attr">user</span> = <span class="hljs-string">&quot;cli1&quot;</span><br><br><span class="hljs-comment"># 授权方式，默认为token</span><br><span class="hljs-attr">auth.method</span> = <span class="hljs-string">&quot;token&quot;</span><br><span class="hljs-comment"># 授权码，请改成更复杂的</span><br><span class="hljs-attr">auth.token</span> = <span class="hljs-string">&quot;aaaaa&quot;</span><br><br><span class="hljs-comment"># frp HTTPS TLS配置，按需配置</span><br><span class="hljs-attr">transport.tls.certFile</span> = <span class="hljs-string">&quot;/path/to/client.crt&quot;</span><br><span class="hljs-attr">transport.tls.keyFile</span> = <span class="hljs-string">&quot;/path/to/client.key&quot;</span><br><span class="hljs-attr">transport.tls.trustedCaFile</span> = <span class="hljs-string">&quot;/path/to/ca.crt&quot;</span><br><br><span class="hljs-comment"># frp 日志配置，按需配置</span><br><span class="hljs-attr">log.to</span> = <span class="hljs-string">&quot;./frpc.log&quot;</span><br><span class="hljs-attr">log.level</span> = <span class="hljs-string">&quot;info&quot;</span><br><span class="hljs-attr">log.maxDays</span> = <span class="hljs-number">5</span><br><br><span class="hljs-comment"># frp 代理设置</span><br><span class="hljs-section">[[visitors]]</span><br><span class="hljs-comment"># 代理名</span><br><span class="hljs-attr">name</span> = <span class="hljs-string">&quot;ssh-stcp-vistor&quot;</span><br><span class="hljs-comment"># 代理类型</span><br><span class="hljs-attr">type</span> = <span class="hljs-string">&quot;stcp&quot;</span><br><span class="hljs-comment"># 目标连接的受控端用户名</span><br><span class="hljs-attr">serverUser</span> = <span class="hljs-string">&quot;cli0&quot;</span><br><span class="hljs-comment"># 目标连接的受控端代理名</span><br><span class="hljs-attr">serverName</span> = <span class="hljs-string">&quot;ssh-stcp&quot;</span><br><span class="hljs-comment"># 仅供与目标连接的受控端代理匹配的安全密钥</span><br><span class="hljs-attr">secretKey</span> = <span class="hljs-string">&quot;bbbbb&quot;</span><br><span class="hljs-comment"># visitor 监听的本地地址，通过访问监听的地址和端口，连接到远端代理的服务。</span><br><span class="hljs-attr">bindAddr</span> = <span class="hljs-string">&quot;127.0.0.1&quot;</span><br><span class="hljs-comment"># visitor 监听的本地端口</span><br><span class="hljs-attr">bindPort</span> = <span class="hljs-number">10000</span><br></code></pre></td></tr></table></figure>
+
+<p>配置并保存后，在当前目录下输入启动命令 <code>./frpc -c ./frpc.toml</code> 启动客户端，查看日志文件，检查是否包含类似输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">2024/12/08 20:58:06 [I] [control.go:143] [ssh] start proxy success<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-开机自启动设置"><a href="#4-开机自启动设置" class="headerlink" title="4 开机自启动设置"></a>4 开机自启动设置</h1><p>在 Linux 系统下，使用 systemd 可以方便地控制 frp 服务端 frps 的启动和停止、配置后台运行和开启自启。</p>
+<h2 id="4-1-服务端"><a href="#4-1-服务端" class="headerlink" title="4.1 服务端"></a>4.1 服务端</h2><p>使用文本编辑器，如 vim 创建并编辑 frps.service ：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim /etc/systemd/system/frps.service<br></code></pre></td></tr></table></figure>
+
+<p>写入内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Unit]</span><br><span class="hljs-comment"># 服务名称，可自定义</span><br><span class="hljs-attr">Description</span> = frp server<br><span class="hljs-attr">After</span> = network.target syslog.target<br><span class="hljs-attr">Wants</span> = network.target<br><br><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Type</span> = simple<br><span class="hljs-comment"># 启动frps的命令</span><br><span class="hljs-attr">ExecStart</span> = /path/to/frps -c /path/to/frps.toml<br><br><span class="hljs-section">[Install]</span><br><span class="hljs-attr">WantedBy</span> = multi-user.target<br></code></pre></td></tr></table></figure>
+
+<h3 id="管理-frps"><a href="#管理-frps" class="headerlink" title="管理 frps"></a>管理 frps</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 启动frp</span><br>systemctl start frps <span class="hljs-comment"># frps就是您上面创建的文件名</span><br><span class="hljs-comment"># 停止frp</span><br>systemctl stop frps<br><span class="hljs-comment"># 重启frp</span><br>systemctl restart frps<br><span class="hljs-comment"># 查看frp状态</span><br>systemctl status frps<br></code></pre></td></tr></table></figure>
+
+<h3 id="配置-frps-开机自启"><a href="#配置-frps-开机自启" class="headerlink" title="配置 frps 开机自启"></a>配置 frps 开机自启</h3><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">systemctl <span class="hljs-built_in">enable</span> frps<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-客户端"><a href="#4-2-客户端" class="headerlink" title="4.2 客户端"></a>4.2 客户端</h2><p>使用文本编辑器，如 vim 创建并编辑 frpc.service ：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim /etc/systemd/system/frpc.service<br></code></pre></td></tr></table></figure>
+
+<p>写入内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[Unit]</span><br><span class="hljs-comment"># 服务名称，可自定义</span><br><span class="hljs-attr">Description</span> = frp client<br><span class="hljs-attr">After</span> = network.target syslog.target<br><span class="hljs-attr">Wants</span> = network.target<br><br><span class="hljs-section">[Service]</span><br><span class="hljs-attr">Type</span> = simple<br><span class="hljs-comment"># 启动frps的命令</span><br><span class="hljs-attr">ExecStart</span> = /path/to/frpc -c /path/to/frpc.toml<br><br><span class="hljs-section">[Install]</span><br><span class="hljs-attr">WantedBy</span> = multi-user.target<br></code></pre></td></tr></table></figure>
+
+<h3 id="管理-frpc"><a href="#管理-frpc" class="headerlink" title="管理 frpc"></a>管理 frpc</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 启动frp</span><br>systemctl start frpc <span class="hljs-comment"># frpc就是您上面创建的文件名</span><br><span class="hljs-comment"># 停止frp</span><br>systemctl stop frpc<br><span class="hljs-comment"># 重启frp</span><br>systemctl restart frpc<br><span class="hljs-comment"># 查看frp状态</span><br>systemctl status frpc<br></code></pre></td></tr></table></figure>
+
+<h3 id="配置-frpc-开机自启"><a href="#配置-frpc-开机自启" class="headerlink" title="配置 frpc 开机自启"></a>配置 frpc 开机自启</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl <span class="hljs-built_in">enable</span> frpc<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="category-chain-item">环境搭建</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/frp/" class="print-no-link">#frp</a>
+      
+        <a href="/tags/Systemd-service/" class="print-no-link">#Systemd service</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>加密 frp 配置教程</div>
+      <div>https://zdawng.github.io/posts/e8847680/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZDawnG</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/43eef8dd/" title="Linux 块层编程指南">
+                        <span class="hidden-mobile">Linux 块层编程指南</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"ZDawnG/ZDawnG.github.io","repo-id":"R_kgDOJ5gWbg","category":"Announcements","category-id":"DIC_kwDOJ5gWbs4CqdLh","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

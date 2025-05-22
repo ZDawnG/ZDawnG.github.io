@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZDawnG">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="从块层到驱动：I&#x2F;O请求创建和结束的全过程分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 块层编程指南">
+<meta property="og:url" content="https://zdawng.github.io/posts/43eef8dd/index.html">
+<meta property="og:site_name" content="ZDawnG">
+<meta property="og:description" content="从块层到驱动：I&#x2F;O请求创建和结束的全过程分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zdawng.github.io/img/iopath/iopath.png">
+<meta property="article:published_time" content="2024-07-02T14:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-22T11:43:13.217Z">
+<meta property="article:author" content="ZDawnG">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="bio">
+<meta property="article:tag" content="driver">
+<meta property="article:tag" content="NVMe">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zdawng.github.io/img/iopath/iopath.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Linux 块层编程指南 - ZDawnG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zdawng.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZDawnG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tool/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>工具</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Linux 块层编程指南"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-07-02 22:00" pubdate>
+          2024年7月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Linux 块层编程指南</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1-存储栈IO路径简介"><a href="#1-存储栈IO路径简介" class="headerlink" title="1 存储栈IO路径简介"></a>1 存储栈IO路径简介</h1><p>当使用 read() 和 write() 系统调用向内核提交I&#x2F;O请求后，要历经多个层次才能完整执行。简单来说，一般包括了以下流程：</p>
+<ol>
+<li>首先，经过虚拟文件系统。虚拟文件系统提供了统一的文件和文件系统的相关接口，屏蔽了不同文件系统的差异和操作细节；</li>
+<li>其次，经过适配当前磁盘分区的文件系统。常见文件系统包括了EXT2&#x2F;3&#x2F;4、FATFS等；</li>
+<li>然后，经过通用块层。块层会将I&#x2F;O请求根据需求进行切分和合并等处理，并交给调度层进行请求调度。处理完成后会将I&#x2F;O请求下发给驱动程序继续进行操作；</li>
+<li>最后，经过驱动程序。驱动根据总线协议将请求转换为对应格式的命令。</li>
+</ol>
+<p>通常，应用程序通过系统调用的方式发送I&#x2F;O相关命令到虚拟文件系统。而具体的文件系统在实现上有很大区别，难以用一篇文章简单的概括。本文重点关注I&#x2F;O请求在通用块层及其之下的层次中是怎样被处理的。</p>
+<p>本文以Linux kernel 5.10版本为例，从关键字段出发，通过介绍几个关键函数，着重分析I&#x2F;O处理过程中的数据传递流程。此外，介绍相关字段的定义方式，为块层和驱动开发提供一份编程指南。</p>
+<p><img src="/img/iopath/iopath.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="2-I-x2F-O请求的创建和下发"><a href="#2-I-x2F-O请求的创建和下发" class="headerlink" title="2 I&#x2F;O请求的创建和下发"></a>2 I&#x2F;O请求的创建和下发</h1><p>开始前，先给出一个IO请求创建和下发过程的调用栈样例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash">sumbit_bio_noacct(struct bio * bio)<br>    ↓<br>__submit_bio_nocacct_mq(struct bio * bio)<br>    ↓<br>blk_mq_submit_bio(struct bio * bio)<br>    ↓<br>blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx, struct request *rq, blk_qc_t *cookie)<br>    ↓<br>__blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx, struct request *rq, blk_qc_t *cookie, bool bypass_insert, bool last)<br>    ↓<br>__blk_mq_issue_directly(struct blk_mq_hw_ctx *hctx, struct request *rq, blk_qc_t *cookie)<br>    ↓<br>nvme_queue_rq(struct blk_mq_hw_ctx *hctx, const struct blk_mq_queue_data *bd)<br>    ↓<br>nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd, bool write_sq)<br>    ↓<br>nvme_write_sq_db(nvmeq, write_sq)<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-1-bio"><a href="#2-1-bio" class="headerlink" title="2.1 bio"></a>2.1 bio</h2><p>bio结构体是块设备I&#x2F;O的基础单元，它描述了一次I&#x2F;O操作。一个bio结构体包含了需要被读写的数据块、数据缓冲区的指针等信息。</p>
+<h3 id="2-1-1-bio的创建"><a href="#2-1-1-bio的创建" class="headerlink" title="2.1.1 bio的创建"></a>2.1.1 bio的创建</h3><p>通常，bio来自上层文件系统，由文件系统负责创建和初始化等工作。然而，在块层开发工作中，特别是基于Device Mapper机制进行开发时，会遇到创建新的bio结构体来承载命令的需求。本小节介绍两种常用的bio创建方式。</p>
+<p><strong>bio clone</strong></p>
+<p><code>bio_clone_fast</code>函数用于克隆一个现有的bio结构体。常用于对bio进行重用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// struct bio_set bs;</span><br><span class="hljs-comment">// bioset_init(&amp;bs, NUMBER, 0, BIOSET_NEED_BVECS)</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">bio</span> *<span class="hljs-title">clone</span> =</span> bio_clone_fast(bio, GFP_NOIO, &amp;bs);<br></code></pre></td></tr></table></figure>
+
+<p><strong>bio alloc</strong></p>
+<p><code>bio_alloc</code>函数用于创建一个新的bio结构体，并为其分配所需的资源。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">bio</span> *<span class="hljs-title">b</span>  =</span> bio_alloc(GFP_KERNEL, <span class="hljs-number">1</span>);<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">page</span> *<span class="hljs-title">page</span> =</span> alloc_page(GFP_KERNEL);<br>bio_add_page(read_bio, page, PAGE_SIZE, <span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+
+<p>创建完成后，还要根据需求，对bio的各个字段进行相应设置。以下是一个简单示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> *<span class="hljs-title">bio</span>;</span><br>bio-&gt;bi_opf = REQ_OP_KV_RETRIEVE | REQ_NOMERGE;<br><span class="hljs-comment">// void my_end_io(struct bio *bio);</span><br>bio-&gt;bi_end_io = my_end_io;<br><span class="hljs-comment">// sturct xxx_config *private_data;</span><br>bio-&gt;bi_private = private_data;<br><span class="hljs-comment">// struct block_device *bdev</span><br>bio_set_dev(bio, bdev);<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-1-2-bio的下发"><a href="#2-1-2-bio的下发" class="headerlink" title="2.1.2 bio的下发"></a>2.1.2 bio的下发</h3><p>下发请求的同时更新统计信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">sumbit_bio(bio);<br></code></pre></td></tr></table></figure>
+
+<p>下发请求的同时更新不统计信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">sumbit_bio_noacct(bio);<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-request"><a href="#2-2-request" class="headerlink" title="2.2 request"></a>2.2 request</h2><p>request 结构体是I&#x2F;O请求的更高级表示，它通常包含一个或多个bio 结构体。同一request中的bio一般具有相似的特征，如具有相同的写入提示（write hint）等。从bio到request的过程中，需要根据bio中的相应字段来设置request的字段。</p>
+<h3 id="2-2-1-request的创建"><a href="#2-2-1-request的创建" class="headerlink" title="2.2.1 request的创建"></a>2.2.1 request的创建</h3><p><strong>blk_mq_alloc_request</strong></p>
+<p>通过此函数可申请一个新的request。一般情况下，bio提交后的处理函数会自行创建和分配request。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// struct request_queue *q;</span><br><span class="hljs-comment">// unsigned int op;</span><br><span class="hljs-comment">// blk_mq_req_flags_t flags;</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">request</span> *<span class="hljs-title">req</span> =</span> blk_mq_alloc_request(q, op, flags);<br></code></pre></td></tr></table></figure>
+
+<p><strong>blk_mq_submit_bio</strong></p>
+<p>此函数会调用<code>__blk_mq_alloc_request</code>函数创建request</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// struct request_queue *q = bio-&gt;bi_disk-&gt;queue;</span><br><span class="hljs-comment">// struct blk_mq_alloc_data data = &#123;.q		= q,&#125;;</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">request</span> *<span class="hljs-title">rq</span> =</span> __blk_mq_alloc_request(&amp;data);<br></code></pre></td></tr></table></figure>
+
+<p>通常，在对bio进行定制化修改（如添加新字段后），如果需要更快地在底层使用这些字段，可以在request中添加相应的字段，并进行相应赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// static void blk_mq_bio_to_request(struct request *rq, struct bio *bio, unsigned int nr_segs)</span><br>rq-&gt;new_value = bio-&gt;newvalue;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-request的下发"><a href="#2-2-2-request的下发" class="headerlink" title="2.2.2 request的下发"></a>2.2.2 request的下发</h3><p>如不涉及I&#x2F;O调度相关的工作，此部分仅作了解即可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">blk_mq_try_issue_directly(data.hctx, rq, &amp;cookie);<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-NVMe-command"><a href="#2-3-NVMe-command" class="headerlink" title="2.3 NVMe command"></a>2.3 NVMe command</h2><p>NVMe（Non-Volatile Memory Express）是一种用于访问非易失性存储介质（如SSD）的传输协议。</p>
+<h3 id="2-3-1-NVMe-command的创建"><a href="#2-3-1-NVMe-command的创建" class="headerlink" title="2.3.1 NVMe command的创建"></a>2.3.1 NVMe command的创建</h3><p>NVMe command是一种固定长度的命令格式。命令的解析方式根据需求不同可以自行定义，但单个命令的大小必须为64B。这是它与request和bio的一个重要的区别。</p>
+<p><strong>nvme_queue_rq</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">nvme_command</span> <span class="hljs-title">cmnd</span>;</span><br></code></pre></td></tr></table></figure>
+
+<p>创建完成后，同样的需要进行相应字段的赋值。注意：如果在上层添加了新字段，需要认真分析每一个命令的保留字段，从中选择合适的接收新字段的值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req, struct nvme_command *cmd)</span><br><span class="hljs-comment">// enum nvme_opcode op;</span><br>cmd-&gt;common.opcode = op;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-2-NVMe-command的下发"><a href="#2-3-2-NVMe-command的下发" class="headerlink" title="2.3.2 NVMe command的下发"></a>2.3.2 NVMe command的下发</h3><p>NVMe command提交到固态盘的过程与固态盘所采用的协议有关。具体细节一般无需关注。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">nvme_submit_cmd(nvmeq, &amp;cmnd, bd-&gt;last);<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-SSD内的IO处理"><a href="#3-SSD内的IO处理" class="headerlink" title="3 SSD内的IO处理"></a>3 SSD内的IO处理</h1><p>SSD（固态硬盘）作为一种主动设备，其性能提升的一大关键在于使用了提交队列（SQ）和完成队列（CQ）机制。这些机制在NVMe（Non-Volatile Memory Express）协议中得到了广泛应用，是现代高性能存储设备的核心技术之一。</p>
+<h2 id="3-1-提交队列（SQ）和完成队列（CQ）的工作机制"><a href="#3-1-提交队列（SQ）和完成队列（CQ）的工作机制" class="headerlink" title="3.1 提交队列（SQ）和完成队列（CQ）的工作机制"></a>3.1 提交队列（SQ）和完成队列（CQ）的工作机制</h2><h3 id="3-1-1-提交队列（Submission-Queue，SQ）"><a href="#3-1-1-提交队列（Submission-Queue，SQ）" class="headerlink" title="3.1.1 提交队列（Submission Queue，SQ）"></a>3.1.1 提交队列（Submission Queue，SQ）</h3><p>提交队列是主机向SSD提交I&#x2F;O请求的地方。每个提交队列都是一个环形缓冲区，存储着待执行的命令。以下是SQ的工作机制：</p>
+<ol>
+<li><p>命令提交：</p>
+<ul>
+<li>主机将I&#x2F;O命令（如读或写命令）写入提交队列。</li>
+<li>每个命令包含了操作的类型、目标地址、数据长度等信息。</li>
+<li>主机更新提交队列的尾指针（Tail Pointer），指向新的命令位置。</li>
+</ul>
+</li>
+<li><p>命令传递：</p>
+<ul>
+<li>主机通过DMA（Direct Memory Access，直接内存访问）将提交队列中的命令传递给SSD。</li>
+<li>NVMe控制器轮询或中断方式检测到提交队列的变化，读取新命令进行处理。</li>
+</ul>
+</li>
+</ol>
+<h3 id="3-1-2-完成队列（Completion-Queue，CQ）"><a href="#3-1-2-完成队列（Completion-Queue，CQ）" class="headerlink" title="3.1.2 完成队列（Completion Queue，CQ）"></a>3.1.2 完成队列（Completion Queue，CQ）</h3><p>完成队列是SSD向主机报告已完成的I&#x2F;O请求的地方。每个完成队列也是一个环形缓冲区，存储着命令完成的信息。以下是CQ的工作机制：</p>
+<ol>
+<li><p>命令完成：</p>
+<ul>
+<li>SSD处理完一个命令后，将命令的完成信息写入完成队列。</li>
+<li>每条完成信息包含了命令的标识符、执行状态等信息。</li>
+<li>SSD更新完成队列的尾指针，指向新的完成信息位置。</li>
+</ul>
+</li>
+<li><p>命令返回：</p>
+<ul>
+<li>主机通过DMA读取完成队列中的完成信息。</li>
+<li>主机更新完成队列的头指针（Head Pointer），标识已处理的完成信息。</li>
+<li>主机根据完成信息，执行相应的回调函数或处理后续操作。</li>
+</ul>
+</li>
+</ol>
+<h1 id="4-I-x2F-O请求的返回和结束"><a href="#4-I-x2F-O请求的返回和结束" class="headerlink" title="4 I&#x2F;O请求的返回和结束"></a>4 I&#x2F;O请求的返回和结束</h1><p>开始前，先给出一个IO请求返回和结束过程的调用栈样例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash">nvme_process_cq(struct nvme_queue *nvmeq)<br>    ↓<br>nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)<br>    ↓<br>nvme_pci_complete_rq(struct request *req)<br>    ↓<br>nvme_complete_rq(struct request *req)<br>    ↓<br>nvme_end_req(struct request *req)<br>    ↓<br>blk_mq_end_request(struct request *rq, blk_status_t error)<br>    ↓<br>__blk_update_request(struct request *req, blk_status_t error,unsigned int nr_bytes)<br>    ↓<br>req_bio_endio(struct request *rq, struct bio *bio, unsigned int nbytes, blk_status_t error)<br>    ↓<br>bio_endio(struct bio *bio);<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-1-NVMe-command"><a href="#4-1-NVMe-command" class="headerlink" title="4.1 NVMe command"></a>4.1 NVMe command</h2><h2 id="4-1-1-NVMe-command的返回"><a href="#4-1-1-NVMe-command的返回" class="headerlink" title="4.1.1 NVMe command的返回"></a>4.1.1 NVMe command的返回</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">nvme_completion</span> *<span class="hljs-title">cqe</span> =</span> &amp;nvmeq-&gt;cqes[idx];<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-1-2-NVMe-command的结束"><a href="#4-1-2-NVMe-command的结束" class="headerlink" title="4.1.2 NVMe command的结束"></a>4.1.2 NVMe command的结束</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">nvme_complete_rq(<span class="hljs-keyword">struct</span> request *req)<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-request"><a href="#4-2-request" class="headerlink" title="4.2 request"></a>4.2 request</h2><h3 id="4-2-1-request的返回"><a href="#4-2-1-request的返回" class="headerlink" title="4.2.1 request的返回"></a>4.2.1 request的返回</h3><p>request需要接收cqe中附加的请求执行结果相关信息。如果需要在返回结果中传递特定信息（如ZNS append命令需要返回的实际LBA信息），需要在<code>nvme_end_req</code>函数中进行相应的赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">req-&gt;result = le32_to_cpu(nvme_req(req)-&gt;result.u32)<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-2-Request的结束"><a href="#4-2-2-Request的结束" class="headerlink" title="4.2.2 Request的结束"></a>4.2.2 Request的结束</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">req_bio_endio(req, bio, bio_bytes, error);<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-3-bio"><a href="#4-3-bio" class="headerlink" title="4.3 bio"></a>4.3 bio</h2><h3 id="4-3-1-bio的返回"><a href="#4-3-1-bio的返回" class="headerlink" title="4.3.1 bio的返回"></a>4.3.1 bio的返回</h3><p>同样的，bio需要接收来自request的命令执行相关信息。相关信息在<code>req_bio_endio</code>函数中进行相应的赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">bio-&gt;bi_result = rq-&gt;result;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-3-2-bio的结束"><a href="#4-3-2-bio的结束" class="headerlink" title="4.3.2 bio的结束"></a>4.3.2 bio的结束</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">bio_endio(bio);<br></code></pre></td></tr></table></figure>
+
+<h1 id="5-如何添加一个新的I-x2F-O路径"><a href="#5-如何添加一个新的I-x2F-O路径" class="headerlink" title="5 如何添加一个新的I&#x2F;O路径"></a>5 如何添加一个新的I&#x2F;O路径</h1><p>添加一个新的I&#x2F;O路径主要包含两个任务：一是新命令和新字段的定义，二是上面提到的新字段值的传递。以下是一个需要修改的结构体的示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// include/linux/blk_types.h</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">bio</span> &#123;</span><br>    ···<br>    <span class="hljs-type">int</span> new_value;<br>    ···<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">req_opf</span> &#123;</span><br>    ···<br>    REQ_NEW_OP = <span class="hljs-number">100</span>,<br>    ···<br>&#125;<br><br><span class="hljs-comment">// include/linux/blkdev.h</span><br><span class="hljs-keyword">struct</span> request &#123;<br>    ···<br>    <span class="hljs-type">int</span> new_value;<br>    ···<br>&#125;<br><br><span class="hljs-comment">// inlude/linux/nvme.h</span><br><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">nvme_opcode</span> &#123;</span><br>    ···<br>    nvme_new_op = <span class="hljs-number">100</span>,<br>    ···<br>&#125;<br><br><span class="hljs-keyword">struct</span> nvme_command &#123;<br>    ···<br>    <span class="hljs-keyword">struct</span> nvme_new_command new;<br>    ···<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">nvme_new_command</span> &#123;</span><br>  __u8    opcde;<br>  __u8    flags;<br>  __u16   command_id;<br>  __le32  nsid;<br>  __u64   rsvd;<br>  __le32  offset;<br>  __u32   rsvd2;<br>  <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">nvme_data_ptr</span> <span class="hljs-title">dptr</span>;</span> <span class="hljs-comment">/* value dptr prp1,2 */</span><br>  __le32  value_len;        <span class="hljs-comment">/* size in word */</span><br>  __u8    key_len;          <span class="hljs-comment">/* 0 ~ 255 (keylen - 1) */</span><br>  __u8    option;<br>  __u8    invalid_byte:<span class="hljs-number">2</span>;<br>  __u8    rsvd3:<span class="hljs-number">6</span>;<br>  __u8    rsvd4;<br>  <span class="hljs-class"><span class="hljs-keyword">union</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>      <span class="hljs-type">char</span>    key[<span class="hljs-number">16</span>];<br>    &#125;;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>      __le64  key_prp;<br>      __le64  key_prp2;<br>    &#125;;<br>  &#125;;<br>&#125;;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/" class="category-chain-item">代码阅读</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/kernel/" class="print-no-link">#kernel</a>
+      
+        <a href="/tags/bio/" class="print-no-link">#bio</a>
+      
+        <a href="/tags/driver/" class="print-no-link">#driver</a>
+      
+        <a href="/tags/NVMe/" class="print-no-link">#NVMe</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Linux 块层编程指南</div>
+      <div>https://zdawng.github.io/posts/43eef8dd/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZDawnG</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年7月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/e8847680/" title="加密 frp 配置教程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">加密 frp 配置教程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/c45bcc25/" title="Linux Kernel Debug 配置教程">
+                        <span class="hidden-mobile">Linux Kernel Debug 配置教程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"ZDawnG/ZDawnG.github.io","repo-id":"R_kgDOJ5gWbg","category":"Announcements","category-id":"DIC_kwDOJ5gWbs4CqdLh","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

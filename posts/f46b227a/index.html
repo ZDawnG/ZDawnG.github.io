@@ -1,0 +1,1095 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZDawnG">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="LaTex基本知识入门及Overleaf协作指南">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Overleaf 指南">
+<meta property="og:url" content="https://zdawng.github.io/posts/f46b227a/index.html">
+<meta property="og:site_name" content="ZDawnG">
+<meta property="og:description" content="LaTex基本知识入门及Overleaf协作指南">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/first_project.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/with_preamble.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/special_font_format.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/special_font_format2.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/add_pic.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/insert_pic.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/unordered_list.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/ordered_list.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/inline_mode.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/inline_mode2.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/display_mode.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/math_exp.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/math_exp2.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/abstract.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/newline.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/section.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/table1.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/table2.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/table3.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/table4.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/contents.svg">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/download.png">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/share1.png">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/sharepublic1.png">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/sharepublicreadwrite.png">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/share1.png">
+<meta property="og:image" content="https://zdawng.github.io/img/overleaf/share2.png">
+<meta property="article:published_time" content="2023-07-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-22T11:43:13.217Z">
+<meta property="article:author" content="ZDawnG">
+<meta property="article:tag" content="Overleaf">
+<meta property="article:tag" content="Latex">
+<meta property="article:tag" content="collaborate">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zdawng.github.io/img/overleaf/first_project.svg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Overleaf 指南 - ZDawnG</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zdawng.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZDawnG</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tool/" target="_self">
+                <i class="iconfont icon-briefcase"></i>
+                <span>工具</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Overleaf 指南"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-31 00:00" pubdate>
+          2023年7月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          60 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Overleaf 指南</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文对 Overleaf 提供的 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Learn_LaTeX_in_30_minutes">Learn LaTeX in 30 minutes</a> （30 分钟 LaTeX 入门指南）以及<a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/how-to/Sharing_a_project">Sharing a project</a>（多人协作指南）进行了中文翻译。</p>
+<h1 id="30-分钟-LaTeX-入门"><a href="#30-分钟-LaTeX-入门" class="headerlink" title="30 分钟 LaTeX 入门"></a>30 分钟 LaTeX 入门</h1><p>在这份指南中，我们希望给你关于 LaTeX 的首个介绍。这份指南不需要你在之前有任何关于 LaTeX 的知识，跟随这份指南你将完成你的第一份 LaTeX 文档，并将对 LaTeX 提供的一些基本功能有很好的了解。</p>
+<h2 id="什么是-LaTeX"><a href="#什么是-LaTeX" class="headerlink" title="什么是 LaTeX"></a>什么是 LaTeX</h2><p>LaTeX（发音为 <em>LAY-tek</em> 或 _LAH-tek_）是一个用于创建具有专业外观的文档的工具。然而，LaTeX 的操作模式与您可能使用过的许多其他文档制作应用程序（例如 Microsoft Word 或 LibreOffice Writer）有很大不同：这些“<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/WYSIWYG">所见即所得</a>”工具为用户提供了一个交互式页面，他们可以在其中键入和编辑文本并应用各种形式的造型。</p>
+<p>LaTeX 的工作方式非常不同：相反，您的文档是一个纯文本文件，其中散布着用于表达所需（排版）结果的 LaTeX 命令。 为了生成可见的排版文档，您的 LaTeX 文件由一个称为 TeX 引擎的软件进行处理，该软件使用文本文件中嵌入的命令来指导和控制排版过程，将 LaTeX 命令和文档文本转换为专业排版 PDF 文件。 这意味着您只需关注文档的内容，计算机通过您的 LaTeX 命令和 TeX 引擎将负责视觉外观（格式）。</p>
+<h2 id="为什么要学习-LaTeX"><a href="#为什么要学习-LaTeX" class="headerlink" title="为什么要学习 LaTeX"></a>为什么要学习 LaTeX</h2><p>可以提出各种支持或反对学习使用 LaTeX 而不是其他文档创作应用程序的论据； 但最终，这是基于偏好、兴趣和文档要求的个人选择。</p>
+<p>支持 LaTeX 的论点包括：</p>
+<ul>
+<li>支持排版极其复杂的数学、表格和物理科学的技术内容；</li>
+<li>脚注、交叉引用和参考书目管理的设施；</li>
+<li>易于生成复杂或乏味的文档元素，例如索引、术语表、目录、图表列表；</li>
+<li>由于其内在的可编程性和通过数千个免费附加包的可扩展性，可以高度定制定制文档生产。</li>
+</ul>
+<p>总体而言，LaTeX 为用户提供了对按照极高标准排版的文档制作的大量控制。 当然，有些类型的文档或出版物是 LaTeX 无法发挥作用的，包括杂志类出版物中常见的许多“自由形式”页面设计。</p>
+<p>LaTeX 的一个重要好处是文档内容与文档样式分离：一旦您编写了文档内容，就可以轻松更改其外观。 同样，您可以创建一个 LaTeX 文件，该文件定义特定文档类型的布局&#x2F;样式，并且该文件可以用作模板来标准化该类型其他文档的作者&#x2F;制作； 例如，这允许科学出版商在 LaTeX 中创建文章模板，作者可以使用该模板撰写论文以提交给期刊。</p>
+<p>Overleaf 的<a target="_blank" rel="noopener" href="https://www.overleaf.com/gallery">图库</a>包含数千个模板，涵盖大量文档类型 - 从科学文章、报告和书籍到简历和演示文稿。 由于这些模板定义了文档的布局和样式，因此作者只需在 Overleaf 中打开它们（创建一个新项目），然后开始编写以添加其内容。</p>
+<h2 id="编写你的第一段-LaTeX"><a href="#编写你的第一段-LaTeX" class="headerlink" title="编写你的第一段 LaTeX"></a>编写你的第一段 LaTeX</h2><p>第一步是创建一个新的 LaTeX 项目。你可以在自己的电脑上创建 <code>.tex</code> 文件，也可以 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Creating_a_document_in_Overleaf">在 Overleaf 中启动新项目</a>。</p>
+<p>让我们从最简单的示例开始：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br>First document. This is a simple example, with no<br>extra parameters or packages included.<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/first_project.svg" srcset="/img/loading.gif" lazyload></p>
+<p>可以看到，LaTeX 已经对文本进行了格式化（如，首行缩进）。下面我们仔细看一下上面这段代码每个部分的功能。</p>
+<p>代码的第一行声明了文档的类型，称为 _类 (class)_。类控制文档的整体外观，不同类型的文档需要选择不同的类，比如，简历与论文需要不同的类。在这个例子中，类是 <code>article</code>，是最简单和最常见的 LaTeX 类。其他类型的文档可能需要使用不同的类，例如 <strong>book</strong> 或 <strong>report</strong>。要了解许多可用的 LaTeX 类类型，请访问 <a target="_blank" rel="noopener" href="https://www.ctan.org/topic/class">CTAN</a>（Comprehensive TeX Archive Network）上的相关页面。</p>
+<p>然后，在 <code>\begin &#123;document&#125;</code> 和 <code>\end &#123;document&#125;</code> 这两个标记之间写入文档内容。这部分就是文档的 _主体 (body)_，你可以在此处开始编写和更改文本。要在 PDF 中查看更改的结果，必须首先编译文档。在 Overleaf 中只需单击 <strong>重新编译（Recompile）</strong>。还可以单击重新编译按钮旁边的小箭头，并将 “自动编译” 设置为 “开”，这样编辑文件时项目将会自动重新编译。</p>
+<p>现在我们已经了解了如何向我们的文档中添加内容，下一步就是撰写标题。为此，我们必须讲一下文档的 <strong>序言 (preamble)</strong></p>
+<h2 id="文档的序言"><a href="#文档的序言" class="headerlink" title="文档的序言"></a>文档的序言</h2><p>在上一个示例中，文本是在 <code>\begin &#123;document&#125;</code> 命令之后输入的。在这个命令之前 <code>.tex</code> 文件中的所有内容都称为 **序言 (preamble)**。在序言中，可以定义要编写的文档的类型，要编写的语言，要使用的包（稍后会详细介绍）和其他的元素。</p>
+<p>例如，普通文档的序言如下所示：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[12pt, letterpaper]&#123;article&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125;<br></code></pre></td></tr></table></figure>
+
+<p>下面我们详细解释一下这两行的作用。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">\documentclass<span class="hljs-selector-attr">[12pt, letterpaper]</span>&#123;<span class="hljs-selector-tag">article</span>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>如前所述，这条命令定义了文档的类型。跟上个示例不一样的是，方括号中还有两个参数，这些参数必须用逗号分隔。</p>
+<p>在这个示例中，这两个额外的参数分别设置字体大小（<code>12pt</code>）和纸张大小（<code>letterpaper</code>）。</p>
+<p>当然，可以使用其他字体大小（<code>9pt</code>，<code>11pt</code>，<code>12pt</code> 等等），但是如果未指定，则默认的字体大小为 <code>10pt</code>。纸张尺寸还可以设置为 <code>a4paper</code> 和 <code>Legalpaper</code>；更多有关 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Page_size_and_margins">页面大小和边距</a> 的信息，可以参阅这篇文章。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">\usepackage<span class="hljs-selector-attr">[utf8]</span>&#123;graphicx&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这行命令指是加载外部包（此处为<code>graphicx</code>）以扩展 LaTeX 功能的示例，<code>graphicx</code>使其能够导入外部图形文件。 LaTeX 包在查找和使用 LaTeX 包部分中讨论。</p>
+<h2 id="添加标题、作者和日期"><a href="#添加标题、作者和日期" class="headerlink" title="添加标题、作者和日期"></a>添加标题、作者和日期</h2><p>要将标题、作者和日期添加到文档中，就必须 <strong>在序言中</strong>（不是文章的主体中）添加下面三行。它们是：</p>
+<ul>
+<li><p><code>\title&#123;First document&#125;</code>：这是文章的标题。</p>
+</li>
+<li><p><code>\author&#123;Hubert Farnsworth&#125;</code>：在此处输入作者的姓名。</p>
+</li>
+<li><p><code>\thanks&#123;funded by the Overleaf team&#125;</code>：在 <code>author</code> 命令的大括号里添加这条命令，可以添加上标和脚注。如果你需要在文章中感谢一个机构，这个功能将非常有用。</p>
+</li>
+<li><p><code>\date&#123;February 2022&#125;</code>：你可以手动输入日期，或使用 <code>\today</code> 命令，以便在编译文档时自动更新日期。</p>
+</li>
+</ul>
+<p>现在，序言部分应该长这样：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[12pt, letterpaper]&#123;article&#125;<br><span class="hljs-keyword">\title</span>&#123;My first LaTeX document&#125;<br><span class="hljs-keyword">\author</span>&#123;Hubert Farnsworth<span class="hljs-keyword">\thanks</span>&#123;Funded by the Overleaf team.&#125;&#125;<br><span class="hljs-keyword">\date</span>&#123;August 2022&#125;<br></code></pre></td></tr></table></figure>
+
+<p>现在，你已经为文档指定了标题、作者和日期，现在可以使用 <code>\maketitle</code> 命令在文档上打印这些信息。这条命令应该写在文档 <strong>主体 (body)</strong> 中你想要打印标题的位置。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><span class="hljs-keyword">\maketitle</span><br>We have now added a title, author and date to our first <span class="hljs-keyword">\LaTeX</span>&#123;&#125; document!<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p>现在可以将序言和正文组合起来生成一个可以在 Overleaf 中打开的完整文档：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[12pt, letterpaper]&#123;article&#125;<br><span class="hljs-keyword">\title</span>&#123;My first LaTeX document&#125;<br><span class="hljs-keyword">\author</span>&#123;Hubert Farnsworth<span class="hljs-keyword">\thanks</span>&#123;Funded by the Overleaf team.&#125;&#125;<br><span class="hljs-keyword">\date</span>&#123;August 2022&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><span class="hljs-keyword">\maketitle</span><br>We have now added a title, author and date to our first <span class="hljs-keyword">\LaTeX</span>&#123;&#125; document!<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/with_preamble.svg" srcset="/img/loading.gif" lazyload></p>
+<h2 id="添加注释"><a href="#添加注释" class="headerlink" title="添加注释"></a>添加注释</h2><p>LaTeX 是“程序代码”的一种形式，但专门用于文档排版； 因此，与使用任何其他编程语言编写的代码一样，在文档中包含注释可能非常有用。注释文本不会被打印，也不会以任何方式影响文档。在调试时，注释文本对于组织工作，做笔记或注释行 &#x2F; 节很有用。</p>
+<p>要在 LaTeX 中添加注释，只需在行首写一个<code>％</code>符号，如下所示：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\maketitle</span><br><br>We have now added a title, author and date to our first <span class="hljs-keyword">\LaTeX</span>&#123;&#125; document!<br><br><span class="hljs-comment">% This line here is a comment. It will not be printed in the document.</span><br><br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p>此示例生成的输出与之前不包含注释的 LaTeX 代码相同。</p>
+<h2 id="加粗、斜体和下划线"><a href="#加粗、斜体和下划线" class="headerlink" title="加粗、斜体和下划线"></a>加粗、斜体和下划线</h2><p>现在让我们来看一些简单的格式化命令。</p>
+<ul>
+<li><strong>加粗</strong>：在 LaTeX 中，加粗字体使用 <code>\textbf&#123;&#125;</code> 命令。</li>
+<li>_斜体_：在 LaTeX 中，斜体使用 <code>\textit&#123;&#125;</code> 命令。</li>
+<li>下划线：在 LaTeX 中，下划线使用 <code>\underline&#123;&#125;</code> 命令。</li>
+</ul>
+<p>下面是示例：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex">Some of the <span class="hljs-keyword">\textbf</span>&#123;greatest&#125;<br>discoveries in <span class="hljs-keyword">\underline</span>&#123;science&#125;<br>were made by <span class="hljs-keyword">\textbf</span>&#123;<span class="hljs-keyword">\textit</span>&#123;accident&#125;&#125;.<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/special_font_format.svg" srcset="/img/loading.gif" lazyload></p>
+<p>另一个非常有用的命令是 <code>\emph&#123;...&#125;</code> 命令。 <code>\emph</code> 是强调文本命令，她完成的操作取决于上下文：在普通文本中，强调的文本是斜体，但是如果在斜体文本中使用，则将文字变为普通文本，请参见以下示例：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs tex">Some of the greatest <span class="hljs-keyword">\emph</span>&#123;discoveries&#125;<br>in science<br>were made by accident.<br><br><span class="hljs-keyword">\textit</span>&#123;Some of the greatest <span class="hljs-keyword">\emph</span>&#123;discoveries&#125;<br>in science<br>were made by accident.&#125;<br><br><span class="hljs-keyword">\textbf</span>&#123;Some of the greatest <span class="hljs-keyword">\emph</span>&#123;discoveries&#125;<br>in science<br>were made by accident.&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/special_font_format2.svg" srcset="/img/loading.gif" lazyload></p>
+<p>不过，有一些包（例如 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Beamer">Beamer</a>），会改变 <code>\emph</code> 命令的作用。</p>
+<h2 id="添加图片"><a href="#添加图片" class="headerlink" title="添加图片"></a>添加图片</h2><p>现在我们来看，如何向 LaTeX 文档添加图片。在 Overleaf 中，你需要首先上传图片。</p>
+<p>下面是一个如何添加图片的示例：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125; <span class="hljs-comment">%LaTeX package to import graphics</span><br><span class="hljs-keyword">\graphicspath</span>&#123;&#123;images/&#125;&#125; <span class="hljs-comment">%configuring the graphicx package</span><br><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br>The universe is immense and it seems to be homogeneous,<br>on a large scale, everywhere we look.<br><br><span class="hljs-comment">% The \includegraphcs command is</span><br><span class="hljs-comment">% provided (implemented) by the</span><br><span class="hljs-comment">% graphicx package</span><br><span class="hljs-keyword">\includegraphics</span>&#123;universe&#125;<br><br>There&#x27;s a picture of a galaxy above.<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/add_pic.svg" srcset="/img/loading.gif" lazyload></p>
+<p>LaTeX 本身不能管理图像，因此需要使用一个 _包 (package)_。包可用于更改 LaTeX 文档的默认外观，或实现更多功能。在这个例子中，要实现在文档中添加图片，因此需要使用 <code>graphicx</code> 包。<code>graphicx</code> 包提供了新的命令 <code>\includegraphics&#123;...&#125;</code> 和 <code>\graphicspath&#123;...&#125;</code>。要使用 <code>graphicx</code> 软件包，要现在序言中添加一行指令：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>\graphicspath&#123;&#123;images/&#125;&#125;</code> 告诉 LaTeX，这些图像保存在当前目录下名为 images 的文件夹中。</p>
+<p><code>\includegraphics &#123;universe&#125;</code> 命令是将图像实际包含在文档中的命令。在这里，universe 是包含不带扩展名的图片文件的名称，图片文件名不应包含空格或多个点。</p>
+<p><strong>注意</strong>：</p>
+<ul>
+<li>LaTeX 允许包含文件扩展名，但是最好忽略它。如果省略文件扩展名，它将提示 LaTeX 搜索所有支持的格式。</li>
+<li>一般来说，图形的文件名不应包含空格或多个点； 还建议在将图像文件上传到 Overleaf 时使用小写字母作为文件扩展名。</li>
+</ul>
+<p>有关 LaTeX 包的更多信息可以在本教程末尾的查找和使用 LaTeX 包部分找到。</p>
+<h3 id="标题、标签和引用"><a href="#标题、标签和引用" class="headerlink" title="标题、标签和引用"></a>标题、标签和引用</h3><p>我们可以像下面这样，在 <code>figure</code> 环境中对图片添加标题、标签和引用。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125;<br><span class="hljs-keyword">\graphicspath</span>&#123;&#123;images/&#125;&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;figure&#125;[h]<br>    <span class="hljs-keyword">\centering</span><br>    <span class="hljs-keyword">\includegraphics</span>[width=0.75<span class="hljs-keyword">\textwidth</span>]&#123;mesh&#125;<br>    <span class="hljs-keyword">\caption</span>&#123;A nice plot.&#125;<br>    <span class="hljs-keyword">\label</span>&#123;fig:mesh1&#125;<br><span class="hljs-keyword">\end</span>&#123;figure&#125;<br><br>As you can see in figure <span class="hljs-keyword">\ref</span>&#123;fig:mesh1&#125;, the function grows near the origin. This example is on page <span class="hljs-keyword">\pageref</span>&#123;fig:mesh1&#125;.<br><br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/insert_pic.svg" srcset="/img/loading.gif" lazyload></p>
+<p>在这个示例中，有几个重要的命令：</p>
+<ul>
+<li><code>\includegraphics[width=0.75\textwidth]&#123;mesh&#125;</code>：这种形式的 <code>\includegraphics</code> 指示 LaTeX 将图形的宽度设置为文本宽度的 75%，其值存储在 \textwidth 命令中。</li>
+<li><code>\caption&#123;A nice plot.&#125;</code>：顾名思义，此命令设置可以放置在图形上方或下方的图形标题。 如果您创建图形列表，则该标题将在该列表中使用。</li>
+<li><code>\label&#123;fig:mesh1&#125;</code>：要在文档中引用此图像，请使用 <code>\label</code> 命令为其指定标签。 该标签用于生成图像的编号，并与下一个命令结合使用，您可以引用它。</li>
+<li><code>\ref&#123;fig:mesh1&#125;</code>：此代码将被与引用的图形对应的数字替换。</li>
+</ul>
+<p>将图像放置在 LaTeX 文档中时，应始终将它们放置在 <code>figure</code> 环境或类似环境中，以便 LaTeX 适配图像和文字。</p>
+<p>进一步的指导包含在以下帮助文章中：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Positioning_of_Figures">Positioning of Figures</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Inserting_Images">Inserting Images</a></li>
+</ul>
+<h2 id="在-LaTeX-中创建列表"><a href="#在-LaTeX-中创建列表" class="headerlink" title="在 LaTeX 中创建列表"></a>在 LaTeX 中创建列表</h2><p>在 LaTeX 中创建列表非常简单。你可以使用不同的 <em>环境 (environment)</em> 来创建不同形式的列表。环境 (environment) 是我们文档中具有不同呈现形式的各个部分。它们以 <code>\begin&#123;...&#125;</code> 命令开始，以 <code>\end&#123;...&#125;</code> 命令结束。</p>
+<p>列表主要有两种类型，有序列表和无序列表。分别使用不同的环境。</p>
+<h3 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h3><p>无序列表是由 <code>itemize</code> 环境生成的。每个条目之前必须有 <code>\item</code>，如下所示。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;itemize&#125;<br>  <span class="hljs-keyword">\item</span> The individual entries are indicated with a black dot, a so-called bullet.<br>  <span class="hljs-keyword">\item</span> The text in the entries may be of any length.<br><span class="hljs-keyword">\end</span>&#123;itemize&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/unordered_list.svg" srcset="/img/loading.gif" lazyload></p>
+<p>默认情况下，各个条目用黑点表示。条目中的文本可以是任何长度。</p>
+<h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><p>有序列表在 <code>enumerate</code> 环境中创建，针对条目的语法与无序列表一致。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;enumerate&#125;<br>  <span class="hljs-keyword">\item</span> This is the first entry in our list<br>  <span class="hljs-keyword">\item</span> The list numbers increase with each entry we add<br><span class="hljs-keyword">\end</span>&#123;enumerate&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/ordered_list.svg" srcset="/img/loading.gif" lazyload></p>
+<p>与无序列表一样，每个条目前必须添加 <code>\item</code>，它将自动生成标记该项目的数字，由从 1 开始。</p>
+<h2 id="在-LaTeX-中添加数学表达式"><a href="#在-LaTeX-中添加数学表达式" class="headerlink" title="在 LaTeX 中添加数学表达式"></a>在 LaTeX 中添加数学表达式</h2><p>LaTeX 的主要优点之一是易于编写数学表达式。LaTeX 中有两种模式用于数学表达式：</p>
+<ul>
+<li><strong>内联 (inline)模式</strong> 编写的公式是文本中的一部分</li>
+<li><strong>显示 (display)模式</strong> 编写的公式不在段落中，而是放在单独的行上。</li>
+</ul>
+<h3 id="内联-inline-模式"><a href="#内联-inline-模式" class="headerlink" title="内联 (inline) 模式"></a>内联 (inline) 模式</h3><p>让我们看一个内联模式的例子：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex">In physics, the mass-energy equivalence is stated<br>by the equation E=mc<span class="hljs-built_in">^</span>2, discovered in 1905 by Albert Einstein.<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/inline_mode.svg" srcset="/img/loading.gif" lazyload></p>
+<p>要在内联模式下添加数学表达式，可以使用以下定界符之一：<code>\(... \)</code>，<code>$ ... $</code> 或 <code>\begin&#123;math&#125; ... \end&#123;math&#125;</code>。它们作用相同，选择哪个完全取决于个人喜好。使用范例如下：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-string">\documentclass[12pt,</span> letterpaper]&#123;article&#125;<br><span class="hljs-string">\begin&#123;document&#125;</span><br><span class="hljs-string">\begin&#123;math&#125;</span><br>E=mc^<span class="hljs-number">2</span><br><span class="hljs-string">\end&#123;math&#125;</span> <span class="hljs-keyword">is</span> typeset <span class="hljs-keyword">in</span> a paragraph using inline math mode---<span class="hljs-keyword">as</span> <span class="hljs-keyword">is</span> $E=mc^<span class="hljs-number">2</span>$, <span class="hljs-keyword">and</span> so too <span class="hljs-keyword">is</span> <span class="hljs-string">\(E=mc^2\).</span><br><span class="hljs-string">\end&#123;document&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/inline_mode2.svg" srcset="/img/loading.gif" lazyload></p>
+<h3 id="显示-display-模式"><a href="#显示-display-模式" class="headerlink" title="显示 (display)模式"></a>显示 (display)模式</h3><p>包含有两种版本：编号和非编号。使用范例如下：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[12pt, letterpaper]&#123;article&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br>The mass-energy equivalence is described by the famous equation<br><span class="hljs-keyword">\[</span> E=mc<span class="hljs-built_in">^</span>2 <span class="hljs-keyword">\]</span> discovered in 1905 by Albert Einstein.<br><br>In natural units (<span class="hljs-built_in">$</span>c = 1<span class="hljs-built_in">$</span>), the formula expresses the identity<br><span class="hljs-keyword">\begin</span>&#123;equation&#125;<br>E=m<br><span class="hljs-keyword">\end</span>&#123;equation&#125;<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/display_mode.svg" srcset="/img/loading.gif" lazyload></p>
+<p>要在显示模式下打印方程式，可以使用以下定界符之一：<code>\[... \]</code>，<code>\begin&#123;displaymath&#125; ... \end&#123;displaymath&#125;</code> 或 <code>\begin&#123;equation&#125; ... \end&#123;equation&#125;</code>。<a target="_blank" rel="noopener" href="https://texfaq.org/FAQ-dolldoll"><strong>不鼓励</strong></a> 使用 <code>$$ ... $$</code>，推荐使用 LaTeX 的分隔符 <code>\[... \]</code> 代替 。</p>
+<h3 id="更完整的例子"><a href="#更完整的例子" class="headerlink" title="更完整的例子"></a>更完整的例子</h3><p>以下示例演示了使用 LaTeX 排版的一系列数学内容。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br>Subscripts in math mode are written as <span class="hljs-built_in">$</span>a<span class="hljs-built_in">_</span>b<span class="hljs-built_in">$</span> and superscripts are written as <span class="hljs-built_in">$</span>a<span class="hljs-built_in">^</span>b<span class="hljs-built_in">$</span>. These can be combined and nested to write expressions such as<br><br><span class="hljs-keyword">\[</span> T<span class="hljs-built_in">^</span>&#123;i<span class="hljs-built_in">_</span>1 i<span class="hljs-built_in">_</span>2 <span class="hljs-keyword">\dots</span> i<span class="hljs-built_in">_</span>p&#125;<span class="hljs-built_in">_</span>&#123;j<span class="hljs-built_in">_</span>1 j<span class="hljs-built_in">_</span>2 <span class="hljs-keyword">\dots</span> j<span class="hljs-built_in">_</span>q&#125; = T(x<span class="hljs-built_in">^</span>&#123;i<span class="hljs-built_in">_</span>1&#125;,<span class="hljs-keyword">\dots</span>,x<span class="hljs-built_in">^</span>&#123;i<span class="hljs-built_in">_</span>p&#125;,e<span class="hljs-built_in">_</span>&#123;j<span class="hljs-built_in">_</span>1&#125;,<span class="hljs-keyword">\dots</span>,e<span class="hljs-built_in">_</span>&#123;j<span class="hljs-built_in">_</span>q&#125;) <span class="hljs-keyword">\]</span><br><br>We write integrals using <span class="hljs-built_in">$</span><span class="hljs-keyword">\int</span><span class="hljs-built_in">$</span> and fractions using <span class="hljs-built_in">$</span><span class="hljs-keyword">\frac</span>&#123;a&#125;&#123;b&#125;<span class="hljs-built_in">$</span>. Limits are placed on integrals using superscripts and subscripts:<br><br><span class="hljs-keyword">\[</span> <span class="hljs-keyword">\int</span><span class="hljs-built_in">_</span>0<span class="hljs-built_in">^</span>1 <span class="hljs-keyword">\frac</span>&#123;dx&#125;&#123;e<span class="hljs-built_in">^</span>x&#125; =  <span class="hljs-keyword">\frac</span>&#123;e-1&#125;&#123;e&#125; <span class="hljs-keyword">\]</span><br><br>Lower case Greek letters are written as <span class="hljs-built_in">$</span><span class="hljs-keyword">\omega</span><span class="hljs-built_in">$</span> <span class="hljs-built_in">$</span><span class="hljs-keyword">\delta</span><span class="hljs-built_in">$</span> etc. while upper case Greek letters are written as <span class="hljs-built_in">$</span><span class="hljs-keyword">\Omega</span><span class="hljs-built_in">$</span> <span class="hljs-built_in">$</span><span class="hljs-keyword">\Delta</span><span class="hljs-built_in">$</span>.<br><br>Mathematical operators are prefixed with a backslash as <span class="hljs-built_in">$</span><span class="hljs-keyword">\sin</span>(<span class="hljs-keyword">\beta</span>)<span class="hljs-built_in">$</span>, <span class="hljs-built_in">$</span><span class="hljs-keyword">\cos</span>(<span class="hljs-keyword">\alpha</span>)<span class="hljs-built_in">$</span>, <span class="hljs-built_in">$</span><span class="hljs-keyword">\log</span>(x)<span class="hljs-built_in">$</span> etc.<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/math_exp.svg" srcset="/img/loading.gif" lazyload></p>
+<p>下一个示例使用 <code>amsmath</code> 包提供的 <code>equation*</code> 环境，因此我们需要将以下行添加到文档序言中：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs prolog">\usepackage&#123;amsmath&#125;<span class="hljs-comment">% For the equation* environment</span><br></code></pre></td></tr></table></figure>
+
+<p>equation* 环境是由外部软件包提供的，请参阅 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Aligning_equations"><strong>amsmath</strong> 文章</a>。</p>
+<p>许多数学命令都需要用到 <code>amsmath</code> 包，因此在编写数学表达式时请确保引入了这个包。下面列举了一些基本的数学命令。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;amsmath&#125;<span class="hljs-comment">% For the equation* environment</span><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><span class="hljs-keyword">\section</span>&#123;First example&#125;<br><br>The well-known Pythagorean theorem <span class="hljs-keyword">\(</span>x<span class="hljs-built_in">^</span>2 + y<span class="hljs-built_in">^</span>2 = z<span class="hljs-built_in">^</span>2<span class="hljs-keyword">\)</span> was proved to be invalid for other exponents, meaning the next equation has no integer solutions for <span class="hljs-keyword">\(</span>n&gt;2<span class="hljs-keyword">\)</span>:<br><br><span class="hljs-keyword">\[</span> x<span class="hljs-built_in">^</span>n + y<span class="hljs-built_in">^</span>n = z<span class="hljs-built_in">^</span>n <span class="hljs-keyword">\]</span><br><br><span class="hljs-keyword">\section</span>&#123;Second example&#125;<br><br>This is a simple math expression <span class="hljs-keyword">\(</span><span class="hljs-keyword">\sqrt</span>&#123;x<span class="hljs-built_in">^</span>2+1&#125;<span class="hljs-keyword">\)</span> inside text.<br>And this is also the same:<br><span class="hljs-keyword">\begin</span>&#123;math&#125;<br><span class="hljs-keyword">\sqrt</span>&#123;x<span class="hljs-built_in">^</span>2+1&#125;<br><span class="hljs-keyword">\end</span>&#123;math&#125;<br>but by using another command.<br><br>This is a simple math expression without numbering<br><span class="hljs-keyword">\[</span><span class="hljs-keyword">\sqrt</span>&#123;x<span class="hljs-built_in">^</span>2+1&#125;<span class="hljs-keyword">\]</span><br>separated from text.<br><br>This is also the same:<br><span class="hljs-keyword">\begin</span>&#123;displaymath&#125;<br><span class="hljs-keyword">\sqrt</span>&#123;x<span class="hljs-built_in">^</span>2+1&#125;<br><span class="hljs-keyword">\end</span>&#123;displaymath&#125;<br><br><span class="hljs-keyword">\ldots</span> and this:<br><span class="hljs-keyword">\begin</span>&#123;equation*&#125;<br><span class="hljs-keyword">\sqrt</span>&#123;x<span class="hljs-built_in">^</span>2+1&#125;<br><span class="hljs-keyword">\end</span>&#123;equation*&#125;<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/math_exp2.svg" srcset="/img/loading.gif" lazyload></p>
+<p>还有太多有关在 LaTeX 中书写数学表达式的知识无法在这里一一提及。可以查看下面这些文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Mathematical_expressions">Mathematical expressions</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Subscripts_and_superscripts">Subscripts and superscripts</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Brackets_and_Parentheses">Brackets and Parentheses</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Fractions_and_Binomials">Fractions and Binomials</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Operators">Aligning Equations</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Operators">Operators</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Spacing_in_math_mode">Spacing in math mode</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Integrals,_sums_and_limits">Integrals, sums and limits</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Display_style_in_math_mode">Display style in math mode</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/List_of_Greek_letters_and_math_symbols">List of Greek letters and math symbols</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Mathematical_fonts">Mathematical fonts</a></li>
+</ul>
+<h2 id="基本格式"><a href="#基本格式" class="headerlink" title="基本格式"></a>基本格式</h2><p>现在，我们来研究如何编写摘要以，及如何将 LaTeX 文档格式化为不同的章节，分节和段落。</p>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><p>在科学文献中，通常会在概要部分里面简述论文的主要内容。在 LaTeX 中有针对概要部分设计的环境。概要环境会将文本以特殊格式放在文档顶部。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;abstract&#125;<br>This is a simple paragraph at the beginning of the<br>document. A brief introduction about the main subject.<br><span class="hljs-keyword">\end</span>&#123;abstract&#125;<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/abstract.svg" srcset="/img/loading.gif" lazyload></p>
+<h3 id="段落和新行"><a href="#段落和新行" class="headerlink" title="段落和新行"></a>段落和新行</h3><p>有了摘要，我们就可以开始写第一段了。 下一个示例演示：</p>
+<ul>
+<li>如何通过按两次“回车”键、结束当前行并插入后续空白行来创建新段落；</li>
+<li>如何通过使用 <code>\\</code> 命令（双反斜杠）插入手动换行符来开始新行而不开始新段落； 或者，使用 <code>\newline</code> 命令。</li>
+</ul>
+<p>本示例中的第三段演示了命令<code> \\</code> 和 <code>\newline</code> 的使用：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;abstract&#125;<br>This is a simple paragraph at the beginning of the<br>document. A brief introduction about the main subject.<br><span class="hljs-keyword">\end</span>&#123;abstract&#125;<br><br>After our abstract we can begin the first paragraph, then press ``enter&#x27;&#x27; twice to start the second one.<br><br>This line will start a second paragraph.<br><br>I will start the third paragraph and then add <span class="hljs-keyword">\\</span> a manual line break which causes this text to start on a new line but remains part of the same paragraph. Alternatively, I can use the <span class="hljs-keyword">\verb</span>|<span class="hljs-string">\newline</span>|<span class="hljs-keyword">\newline</span> command to start a new line, which is also part of the same paragraph.<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/newline.svg" srcset="/img/loading.gif" lazyload></p>
+<p>请注意 LaTeX 如何自动缩进段落（除非紧接在文档标题（例如节和小节）之后）。</p>
+<p>建议新用户不要使用多个 <code>\\</code> 或 <code>\newlines</code> 来“模拟”间距较大的段落，因为这会干扰 LaTeX 的排版算法。 推荐的方法是继续使用空行创建新段落，不带任何 <code>\\</code>，并通过在序言中添加 <code>\usepackage&#123;parskip&#125;</code> 来加载 <code>parskip</code> 包。</p>
+<p>有关段落的更多信息可以在以下文章中找到：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Paragraphs_and_new_lines">Paragraphs and new lines</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Articles/How_to_change_paragraph_spacing_in_LaTeX">How to change paragraph spacing in LaTeX</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/LaTeX/Errors/LaTeX_Error%3A_There's_no_line_here_to_end">LaTeX Error: There’s no line here to end</a></li>
+</ul>
+<h3 id="章节和分段"><a href="#章节和分段" class="headerlink" title="章节和分段"></a>章节和分段</h3><p>较长的文档，无论使用何种创作软件，通常都会分为部分、章节、节、小节等。 LaTeX 还提供文档结构命令，但可用的命令及其实现（它们的作用）可能取决于所使用的文档类。 举例来说，使用 book 类创建的文档可以分为部分、章节、节、小节等，但 letter 类不提供（支持）任何命令来执行此操作。</p>
+<p>下一个示例演示了用于书籍类构建文档的命令：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;book&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\chapter</span>&#123;First Chapter&#125;<br><br><span class="hljs-keyword">\section</span>&#123;Introduction&#125;<br><br>This is the first section.<br><br>Lorem  ipsum  dolor  sit  amet,  consectetuer  adipiscing<br>elit. Etiam  lobortisfacilisis sem.  Nullam nec mi et<br>neque pharetra sollicitudin.  Praesent imperdietmi nec ante.<br>Donec ullamcorper, felis non sodales...<br><br><span class="hljs-keyword">\section</span>&#123;Second Section&#125;<br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra<br>sollicitudin.  Praesent imperdiet mi necante...<br><br><span class="hljs-keyword">\subsection</span>&#123;First Subsection&#125;<br>Praesent imperdietmi nec ante. Donec ullamcorper, felis non sodales...<br><br><span class="hljs-keyword">\section</span>*&#123;Unnumbered Section&#125;<br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Etiam lobortis facilisissem...<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<p><img src="/img/overleaf/section.svg" srcset="/img/loading.gif" lazyload></p>
+<p>切片命令的名称大多是不言自明的； 例如，<code>\chapter&#123;First Chapter&#125;</code> 创建一个标题为 <code>First Chapter</code> 的新章节，<code>\section&#123;Introduction&#125;</code> 生成标题为“<code>Introduction</code>”的部分，等等。 节可以进一步分为 <code>\subsection&#123;...&#125;</code> 甚至 <code>\subsubsection&#123;...&#125;</code>。 节、小节等的编号是自动的，但可以通过使用相应命令的所谓加星号版本来禁用，该命令末尾有星号 (<code>*</code>)，例如 <code>\section*&#123;...&#125;</code> 和 <code>\subsection *&#123;...&#125;</code>。</p>
+<p>总的来说，LaTeX 文档类提供以下分段命令，每个特定类都支持相关子集：</p>
+<ul>
+<li><code>\part&#123;part&#125;</code></li>
+<li><code>\chapter&#123;chapter&#125;</code></li>
+<li><code>\section&#123;section&#125;</code></li>
+<li><code>\subsection&#123;subsection&#125;</code></li>
+<li><code>\subsubsection&#123;subsubsection&#125;</code></li>
+<li><code>\paragraph&#123;paragraph&#125;</code></li>
+<li><code>\subparagraph&#123;subparagraph&#125;</code></li>
+</ul>
+<p>请注意，<code>\part</code> 和 <code>\chapter</code> 仅在 report 和 book 类中可用。</p>
+<p>有关文档结构的更完整讨论，请参阅 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/Sections_and_chapters">这篇文章</a>。</p>
+<h2 id="创建表格"><a href="#创建表格" class="headerlink" title="创建表格"></a>创建表格</h2><h3 id="在-LaTeX-中创建一个简单的表格"><a href="#在-LaTeX-中创建一个简单的表格" class="headerlink" title="在 LaTeX 中创建一个简单的表格"></a>在 LaTeX 中创建一个简单的表格</h3><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;center&#125;<br><span class="hljs-keyword">\begin</span>&#123;tabular&#125;&#123; c c c &#125;<br> cell1 <span class="hljs-built_in">&amp;</span> cell2 <span class="hljs-built_in">&amp;</span> cell3 <span class="hljs-keyword">\\</span><br> cell4 <span class="hljs-built_in">&amp;</span> cell5 <span class="hljs-built_in">&amp;</span> cell6 <span class="hljs-keyword">\\</span><br> cell7 <span class="hljs-built_in">&amp;</span> cell8 <span class="hljs-built_in">&amp;</span> cell9<br><span class="hljs-keyword">\end</span>&#123;tabular&#125;<br><span class="hljs-keyword">\end</span>&#123;center&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/table1.svg" srcset="/img/loading.gif" lazyload></p>
+<p><code>tabular</code> 是创建表的默认 LaTeX 方法。你必须为此环境指定一个参数，这个例子里是 <code>&#123;c c c&#125;</code>。这告诉 LaTeX，表格将有三列，每列中的文本必须居中。你还可以使用 <code>r</code> 将文本向右对齐，使用 <code>l</code> 进行左对齐。符号 <code>&amp;</code> 是分隔符，每行中的分隔符必须始终少于列数。要转到表格的下一行，需要使用换行命令 <code>\\</code>。我们将整个表包装在 <code>center</code> 环境中，以让它出现在页面的中心。</p>
+<h3 id="添加边框"><a href="#添加边框" class="headerlink" title="添加边框"></a>添加边框</h3><p><code>tabular</code> 支持水平线和垂直线（规则）作为表格的一部分：</p>
+<ul>
+<li>要在行上方和下方添加水平线，请使用 \hline 命令</li>
+<li>要在列之间添加垂直线，请使用垂直线参数 |</li>
+</ul>
+<p>在此示例中，参数是 <code>&#123;|c|c|c|&#125;</code>，它声明了三个（居中）列，每个列由垂直线分隔； 此外，我们使用 <code>\hline</code> 在第一行上方和最后一行下方放置水平线：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;center&#125;<br><span class="hljs-keyword">\begin</span>&#123;tabular&#125;&#123; |c|c|c| &#125;<br> <span class="hljs-keyword">\hline</span><br> cell1 <span class="hljs-built_in">&amp;</span> cell2 <span class="hljs-built_in">&amp;</span> cell3 <span class="hljs-keyword">\\</span><br> cell4 <span class="hljs-built_in">&amp;</span> cell5 <span class="hljs-built_in">&amp;</span> cell6 <span class="hljs-keyword">\\</span><br> cell7 <span class="hljs-built_in">&amp;</span> cell8 <span class="hljs-built_in">&amp;</span> cell9 <span class="hljs-keyword">\\</span><br> <span class="hljs-keyword">\hline</span><br><span class="hljs-keyword">\end</span>&#123;tabular&#125;<br><span class="hljs-keyword">\end</span>&#123;center&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/table2.svg" srcset="/img/loading.gif" lazyload></p>
+<p>在下面你可以看到第二个示例。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;center&#125;<br> <span class="hljs-keyword">\begin</span>&#123;tabular&#125;&#123;||c c c c||&#125;<br> <span class="hljs-keyword">\hline</span><br> Col1 <span class="hljs-built_in">&amp;</span> Col2 <span class="hljs-built_in">&amp;</span> Col2 <span class="hljs-built_in">&amp;</span> Col3 <span class="hljs-keyword">\\</span> [0.5ex]<br> <span class="hljs-keyword">\hline</span><span class="hljs-keyword">\hline</span><br> 1 <span class="hljs-built_in">&amp;</span> 6 <span class="hljs-built_in">&amp;</span> 87837 <span class="hljs-built_in">&amp;</span> 787 <span class="hljs-keyword">\\</span><br> <span class="hljs-keyword">\hline</span><br> 2 <span class="hljs-built_in">&amp;</span> 7 <span class="hljs-built_in">&amp;</span> 78 <span class="hljs-built_in">&amp;</span> 5415 <span class="hljs-keyword">\\</span><br> <span class="hljs-keyword">\hline</span><br> 3 <span class="hljs-built_in">&amp;</span> 545 <span class="hljs-built_in">&amp;</span> 778 <span class="hljs-built_in">&amp;</span> 7507 <span class="hljs-keyword">\\</span><br> <span class="hljs-keyword">\hline</span><br> 4 <span class="hljs-built_in">&amp;</span> 545 <span class="hljs-built_in">&amp;</span> 18744 <span class="hljs-built_in">&amp;</span> 7560 <span class="hljs-keyword">\\</span><br> <span class="hljs-keyword">\hline</span><br> 5 <span class="hljs-built_in">&amp;</span> 88 <span class="hljs-built_in">&amp;</span> 788 <span class="hljs-built_in">&amp;</span> 6344 <span class="hljs-keyword">\\</span> [1ex]<br> <span class="hljs-keyword">\hline</span><br><span class="hljs-keyword">\end</span>&#123;tabular&#125;<br><span class="hljs-keyword">\end</span>&#123;center&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/table3.svg" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>在 LaTeX 中创建表有时会有些棘手，因此你可能需要 <a target="_blank" rel="noopener" href="https://www.tablesgenerator.com/">TablesGenerator.com</a> 这样的在线工具导出表格的 LaTeX 代码。<em>“文件”&gt;“粘贴表数据”</em> 选项从电子表格软件粘贴数据。</p>
+</blockquote>
+<h3 id="标题、标签和引用-1"><a href="#标题、标签和引用-1" class="headerlink" title="标题、标签和引用"></a>标题、标签和引用</h3><p>你可以使用与图片几乎相同的方式来为表格添加标题、标签和引用。唯一的区别是，使用 <code>table</code> 代替了 <code>figure</code> 。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs tex">Table <span class="hljs-keyword">\ref</span>&#123;table:data&#125; shows how to add a table caption and reference a table.<br><span class="hljs-keyword">\begin</span>&#123;table&#125;[h!]<br><span class="hljs-keyword">\centering</span><br><span class="hljs-keyword">\begin</span>&#123;tabular&#125;&#123;||c c c c||&#125;<br> <span class="hljs-keyword">\hline</span><br> Col1 <span class="hljs-built_in">&amp;</span> Col2 <span class="hljs-built_in">&amp;</span> Col2 <span class="hljs-built_in">&amp;</span> Col3 <span class="hljs-keyword">\\</span> [0.5ex]<br> <span class="hljs-keyword">\hline</span><span class="hljs-keyword">\hline</span><br> 1 <span class="hljs-built_in">&amp;</span> 6 <span class="hljs-built_in">&amp;</span> 87837 <span class="hljs-built_in">&amp;</span> 787 <span class="hljs-keyword">\\</span><br> 2 <span class="hljs-built_in">&amp;</span> 7 <span class="hljs-built_in">&amp;</span> 78 <span class="hljs-built_in">&amp;</span> 5415 <span class="hljs-keyword">\\</span><br> 3 <span class="hljs-built_in">&amp;</span> 545 <span class="hljs-built_in">&amp;</span> 778 <span class="hljs-built_in">&amp;</span> 7507 <span class="hljs-keyword">\\</span><br> 4 <span class="hljs-built_in">&amp;</span> 545 <span class="hljs-built_in">&amp;</span> 18744 <span class="hljs-built_in">&amp;</span> 7560 <span class="hljs-keyword">\\</span><br> 5 <span class="hljs-built_in">&amp;</span> 88 <span class="hljs-built_in">&amp;</span> 788 <span class="hljs-built_in">&amp;</span> 6344 <span class="hljs-keyword">\\</span> [1ex]<br> <span class="hljs-keyword">\hline</span><br><span class="hljs-keyword">\end</span>&#123;tabular&#125;<br><span class="hljs-keyword">\caption</span>&#123;Table to test captions and labels.&#125;<br><span class="hljs-keyword">\label</span>&#123;table:data&#125;<br><span class="hljs-keyword">\end</span>&#123;table&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/table4.svg" srcset="/img/loading.gif" lazyload></p>
+<h2 id="添加目录"><a href="#添加目录" class="headerlink" title="添加目录"></a>添加目录</h2><p>创建目录很简单，使用 <code>\tableofcontents</code> 即可完成所有工作：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;article&#125;<br><span class="hljs-keyword">\title</span>&#123;Sections and Chapters&#125;<br><span class="hljs-keyword">\author</span>&#123;Gubert Farnsworth&#125;<br><span class="hljs-keyword">\date</span>&#123;August 2022&#125;<br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\maketitle</span><br><br><span class="hljs-keyword">\tableofcontents</span><br><br><span class="hljs-keyword">\section</span>&#123;Introduction&#125;<br><br>This is the first section.<br><br>Lorem  ipsum  dolor  sit  amet,  consectetuer  adipiscing<br>elit.   Etiam  lobortisfacilisis sem.  Nullam nec mi et<br>neque pharetra sollicitudin.  Praesent imperdietmi nec ante.<br>Donec ullamcorper, felis non sodales...<br><br><span class="hljs-keyword">\section</span>*&#123;Unnumbered Section&#125;<br><span class="hljs-keyword">\addcontentsline</span>&#123;toc&#125;&#123;section&#125;&#123;Unnumbered Section&#125;<br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra<br>sollicitudin.  Praesent imperdiet mi necante...<br><br><span class="hljs-keyword">\section</span>&#123;Second Section&#125;<br><br>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Etiam lobortis facilisissem.  Nullam nec mi et neque pharetra<br>sollicitudin.  Praesent imperdiet mi necante...<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/overleaf/contents.svg" srcset="/img/loading.gif" lazyload></p>
+<p><code>section</code>&#x2F;<code>subsection</code>&#x2F;<code>chapter</code> 将会自动加入目录当中。如果需要加入手动添加目录条目，比如需要将非编号的 <code>section</code> 加入目录，需要像示例中那样使用 <code>\addcontentsline</code>。</p>
+<h2 id="下载写好的文档"><a href="#下载写好的文档" class="headerlink" title="下载写好的文档"></a>下载写好的文档</h2><p>你可以通过单击左上角的 “菜单” 按钮来下载完成的 PDF。还有一个更快的方法，就是单击 PDF 查看器上的 “下载 PDF” 按钮，如下所示。</p>
+<p><img src="/img/overleaf/download.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="查找并使用-LaTeX-包"><a href="#查找并使用-LaTeX-包" class="headerlink" title="查找并使用 LaTeX 包"></a>查找并使用 LaTeX 包</h2><p>LaTeX 不仅提供了重要的排版功能，而且还通过使用附加包提供了可扩展性的框架。 LaTeX 不是试图提供“尝试做所有事情”的命令和功能，而是被设计为可扩展的，允许用户加载提供更专业排版功能或扩展 LaTeX 内置功能的外部代码体（包），例如 排版表。 正如添加图像部分中所看到的，<code>graphicx</code> 包通过提供导入图形文件的命令来扩展 LaTeX，并通过以下命令来加载（在序言中）</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="加载包"><a href="#加载包" class="headerlink" title="加载包"></a>加载包</h3><p>如上所述，包通过 <code>\usepackage</code> 命令加载到文档序言中，但由于（许多）LaTeX 包提供了一组选项，可用于配置其行为，<code>\usepackage</code> 命令通常如下所示：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>[options]&#123;somepackage&#125;<br></code></pre></td></tr></table></figure>
+
+<p>方括号“<code>[...]</code>”告知 LaTeX 在加载某个包时应应用哪组选项。 在用户请求的选项集中，各个选项或设置通常用逗号分隔； 例如，<code>geometry</code> 包提供了许多选项来配置 LaTeX 中的页面布局，因此 <code>geometry</code> 的典型用法可能如下所示：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>[总计=&#123;6.5in,8.75in&#125;,<br>top=1.2in, left=0.9in, includefoot]&#123;geometry&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>geometry</code> 是由全球 LaTeX 社区成员编写和贡献的包的一个示例，并且免费提供给任何想要使用它的人。</p>
+<p>如果一个 LaTeX 包没有提供任何选项，或者用户想要使用包选项的默认值，那么它将像这样加载：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>&#123;somepackage&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当您编写 <code>\usepackage[...]&#123;somepackage&#125;</code> 时，LATEX 会查找名为 <code>somepackage.sty</code> 的相应文件，它需要加载和处理该文件，以使包命令可用并执行该包提供的任何其他代码。 如果 LATEX 找不到 <code>somepackage.sty</code> ，它将终止并出现错误，如以下 Overleaf 示例所示：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[12pt, letterpaper]&#123;article&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;somepackage&#125;<span class="hljs-comment">% a NON-EXISTENT package</span><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br>This will fail!<br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="查找有关包的信息：CTAN"><a href="#查找有关包的信息：CTAN" class="headerlink" title="查找有关包的信息：CTAN"></a>查找有关包的信息：CTAN</h3><p>您可以浏览 CTAN 寻找有用的软件包； 例如：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.ctan.org/topics/cloud">by topic</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ctan.org/pkg">alphabetically</a> (根据名称)</li>
+</ul>
+<p>您还可以使用（位于页面顶部）的<a target="_blank" rel="noopener" href="https://www.ctan.org/pkg">搜索工具</a></p>
+<h3 id="Overleaf-可用软件包：TeX-Live-简介"><a href="#Overleaf-可用软件包：TeX-Live-简介" class="headerlink" title="Overleaf 可用软件包：TeX Live 简介"></a>Overleaf 可用软件包：TeX Live 简介</h3><p>每年，CTAN 上托管的（大型）软件包子集以及与 LaTeX 相关的字体和其他软件都会被整理并作为名为 TeX Live 的系统分发，该系统可用于安装您自己的（本地）LaTeX 设置。 事实上，Overleaf 的服务器也使用 TeX Live，并在 TeX Live 新版本发布时进行更新。 Overleaf 的 TeX Live 更新不是立即进行的，而是在发布后几个月进行，这让我们有时间对新的 TeX Live 版本与我们库中包含的数千个模板进行兼容性测试。 例如，这是我们的 TeX Live 2022 升级公告。</p>
+<p>尽管 TeX Live 包含 CTAN 包的（大）子集，但可以找到一个有趣的包，例如用于排版 Go 图的 igo，它托管在 CTAN 上，但不包含在 TeX Live 中（由其分发），因此在 Overleaf 上不可用。 由于多种原因，CTAN 上托管的某些软件包不是 TeX Live 的一部分：可能某个软件包已过时、存在许可问题、非常新（最近上传）或具有平台依赖性，例如在 Windows 上运行但不能在 Linux 上运行。</p>
+<p>新软件包以及现有软件包的更新全年都会上传到 CTAN，但 TeX Live 的更新每年都会分发； 因此，当前版本的 TeX Live 中包含的软件包将不会像 CTAN 上托管的软件包那样是最新的。 由于 Overleaf 的服务器使用 TeX Live，因此我们服务器上安装的软件包（即可供用户使用的软件包）可能不是 CTAN 上可用的最新版本，但一般来说，这不太可能出现问题。</p>
+<h1 id="多人协作指南"><a href="#多人协作指南" class="headerlink" title="多人协作指南"></a>多人协作指南</h1><p>Overleaf 的主要功能之一是能够共享项目并与其他用户协作。</p>
+<h2 id="链接分享"><a href="#链接分享" class="headerlink" title="链接分享"></a>链接分享</h2><p>“链接共享”允许项目所有者通过不同类型的链接共享他们的项目：</p>
+<ul>
+<li>任何拥有只读链接的人都应该能够访问和阅读相关的 Overleaf 项目</li>
+<li>任何拥有编辑链接的人（ 如果他们已经有 Overleaf 帐户）都可以编辑关联的 Overleaf 项目，否则他们首先需要创建一个帐户</li>
+</ul>
+<p>要访问链接共享：</p>
+<ol>
+<li><p>单击项目右上角的共享按钮<br><img src="/img/overleaf/share1.png" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>单击打开链接共享<br><img src="/img/overleaf/sharepublic1.png" srcset="/img/loading.gif" lazyload alt="Sharepublic1.PNG"></p>
+</li>
+<li></li>
+<li><p>将显示可共享的读取和编辑以及只读 URL<br><img src="/img/overleaf/sharepublicreadwrite.png" srcset="/img/loading.gif" lazyload alt="Sharepublicreadwrite.png"></p>
+<p>要让某人访问该项目，只需向他们发送该项目的 URL 即可。 请注意，用户必须拥有 Overleaf 帐户才能编辑链接共享项目。</p>
+</li>
+</ol>
+<h2 id="邀请指定合作者"><a href="#邀请指定合作者" class="headerlink" title="邀请指定合作者"></a>邀请指定合作者</h2><p>与指定协作者共享项目的功能更加强大，因为唯一被允许访问该项目的人是您邀请参与该项目的人员。 与某人共享项目：</p>
+<ul>
+<li>单击项目右上角的共享按钮</li>
+</ul>
+<p><img src="/img/overleaf/share1.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>输入您想要与其共享项目的帐户的电子邮件地址：</li>
+</ul>
+<p><img src="/img/overleaf/share2.png" srcset="/img/loading.gif" lazyload alt="Share2.PNG"></p>
+<ul>
+<li>选择您是否希望协作者具有只读访问权限，或者是否允许他们编辑项目。</li>
+<li>点击分享</li>
+</ul>
+<p>您的合作者现在将收到一封电子邮件，邀请他们加入该项目。 一旦他们登录到自己的帐户，他们将能够接受邀请并就项目进行协作。 共享项目窗口将更新以显示他们已接受请求并加入项目。 如果他们没有收到电子邮件：</p>
+<ul>
+<li>确保您使用的电子邮件地址正确</li>
+<li>尝试通过单击共享项目窗口中的重新发送来重新发送电子邮件</li>
+<li>检查电子邮件地址的垃圾邮件文件夹，因为有时电子邮件可能会被错误地放入其中。</li>
+</ul>
+<h2 id="允许的协作者数量"><a href="#允许的协作者数量" class="headerlink" title="允许的协作者数量"></a>允许的协作者数量</h2><p>扩展命名共享是一项高级功能。 Overleaf 高级功能可供 Overleaf Commons 的参与者、团体订阅的成员和个人订阅的所有者使用。 您可以邀请的合作者数量将取决于您所属的计划。 访问订阅计划页面以查看可用的不同计划。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/" class="category-chain-item">常用工具</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Overleaf/" class="print-no-link">#Overleaf</a>
+      
+        <a href="/tags/Latex/" class="print-no-link">#Latex</a>
+      
+        <a href="/tags/collaborate/" class="print-no-link">#collaborate</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Overleaf 指南</div>
+      <div>https://zdawng.github.io/posts/f46b227a/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZDawnG</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/posts/1c4bcd74/" title="frp 配置教程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">frp 配置教程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/a948432a/" title="SPDK安装与使用">
+                        <span class="hidden-mobile">SPDK安装与使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"ZDawnG/ZDawnG.github.io","repo-id":"R_kgDOJ5gWbg","category":"Announcements","category-id":"DIC_kwDOJ5gWbs4CqdLh","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
